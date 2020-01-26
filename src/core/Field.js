@@ -1,20 +1,15 @@
-import { getNamedType, GraphQLList, GraphQLNonNull } from 'graphql';
+import Type from './Type';
 import { ucFirst, isScalarDataType } from '../service/app.service';
 
-export default class Field {
-  constructor(schema, name, ast) {
+export default class Field extends Type {
+  constructor(schema, field) {
+    super(field);
     this.schema = schema;
-    this.name = name;
-    this.ast = ast;
-    this.toString = () => `${name}`;
-  }
-
-  getName() {
-    return this.name;
+    this.toString = () => `${this.getName()}`;
   }
 
   getDataType() {
-    return `${getNamedType(this.ast.type)}`;
+    return this.getType();
   }
 
   getSimpleType() {
@@ -49,7 +44,7 @@ export default class Field {
     const ref = this.getDataRef();
 
     if (ref) {
-      if (this.isArray()) return `${fieldName}(first: Int after: String last: Int before: String query: ${ref}InputQuery): Connection`;
+      if (this.isArray()) return `${fieldName}(first: Int after: String lfield: Int before: String query: ${ref}InputQuery): Connection`;
       return `${fieldName}(query: ${ref}InputQuery): ${type}`;
     }
 
@@ -90,32 +85,27 @@ export default class Field {
   }
 
   getOnDelete() {
-    return this.options.onDelete;
+    return Boolean(this.getDirective('onDelete'));
   }
 
-  isArray() {
-    return this.ast.type instanceof GraphQLList;
+  isCreateField() {
+    return this.getSimpleType() !== 'ID' && !this.isVirtual();
   }
 
-  isScalar() {
-    return isScalarDataType(this.getSimpleType());
+  isUpdateField() {
+    return this.isCreateField() && !this.isImmutable();
   }
 
   isVirtual() {
-    return Boolean(this.options.by);
+    return Boolean(this.getDirective('virtual'));
   }
 
-  isEmbedded() {
-    return Boolean(this.options.embedded);
-  }
-
-  isRequired() {
-    return this.ast.type instanceof GraphQLNonNull;
+  isImmutable() {
+    return Boolean(this.getDirective('immutable'));
   }
 
   // TODO: These are broken
-
-  isImmutable() {
-    return this.options.immutable;
+  isEmbedded() {
+    return Boolean(this.options.embedded);
   }
 }

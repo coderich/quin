@@ -1,16 +1,12 @@
+import Type from './Type';
 import Field from './Field';
 
-export default class Model {
-  constructor(schema, name, ast) {
+export default class Model extends Type {
+  constructor(schema, model) {
+    super(model);
     this.schema = schema;
-    this.name = name;
-    this.ast = ast;
-    this.fields = Object.entries(ast.getFields()).map(([fieldName, fieldAST]) => new Field(schema, fieldName, fieldAST));
-    this.toString = () => `${name}`;
-  }
-
-  getName() {
-    return this.name;
+    this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
+    this.toString = () => `${this.getName()}`;
   }
 
   getFields() {
@@ -40,11 +36,11 @@ export default class Model {
   }
 
   getCreateFields() {
-    return this.fields.filter(field => !field.isVirtual());
+    return this.fields.filter(field => field.isCreateField());
   }
 
   getUpdateFields() {
-    return this.fields.filter(field => !field.isVirtual() && !field.isImmutable());
+    return this.fields.filter(field => field.isUpdateField());
   }
 
   getDataRefFields() {

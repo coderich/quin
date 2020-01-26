@@ -2,7 +2,7 @@ export default `
   type Person {
     id: ID!
     name: String!
-    authored: [Book]
+    authored: [Book] @virtual(by: "author")
     emailAddress: String!
     status: String
   }
@@ -10,6 +10,7 @@ export default `
   type Book {
     id: ID!
     name: String!
+    author: Person! @immutable @onDelete(op: "cascade")
     price: Float!
   }
 `;
