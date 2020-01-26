@@ -1,0 +1,28 @@
+{
+  "name": "@coderich/linchpin",
+  "author": "Richard Livolsi (coderich)",
+  "version": "0.0.1",
+  "description": "A GraphQL Schema to represent your data",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "ratchet test",
+    "lint": "ratchet ling",
+    "ratchet": "ratchet"
+  },
+  "dependencies": {
+    "graphql": "^14.6.0",
+    "graphql-tools": "^4.0.6"
+  },
+  "devDependencies": {
+    "@coderich/ratchet": "^1.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderich/linchpin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coderich/linchpin/issues"
+  },
+  "homepage": "https://github.com/coderich/linchpin#readme"
+}
