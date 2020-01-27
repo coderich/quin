@@ -64,9 +64,11 @@ describe('Schema', () => {
     expect(personId.getDataType()).toBe('ID');
     expect(personName.getName()).toBe('name');
     expect(personName.getDataType()).toBe('String');
+    expect(personName.getSimpleType()).toBe('String');
     expect(personName.getDataRef()).toBeNull();
     expect(personAuthored.getName()).toBe('authored');
-    expect(personAuthored.getDataType()).toBe('Book');
+    expect(personAuthored.getDataType()).toEqual(['Book']);
+    expect(personAuthored.getSimpleType()).toBe('Book');
     expect(personAuthored.getDataRef()).toBe('Book');
 
     // Booleans

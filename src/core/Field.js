@@ -1,5 +1,5 @@
 import Type from './Type';
-import { ucFirst, isScalarDataType } from '../service/app.service';
+import { isScalarDataType } from '../service/app.service';
 
 export default class Field extends Type {
   constructor(schema, field) {
@@ -9,25 +9,13 @@ export default class Field extends Type {
   }
 
   getDataType() {
-    return this.getType();
+    const type = this.getType();
+    return this.isArray() ? [type] : type;
   }
 
   getSimpleType() {
-    return this.getDataType();
+    return this.getType();
   }
-
-  // getDataType(field = this.options) {
-  //   switch (field) {
-  //     case String: return 'String';
-  //     case Number: return 'Float';
-  //     case Boolean: return 'Boolean';
-  //     default: {
-  //       if (Array.isArray(field)) { field[0] = this.getDataType(field[0]); return field; }
-  //       if (field instanceof Object) return this.getDataType(field.type);
-  //       return field;
-  //     }
-  //   }
-  // }
 
   // getGQLType(suffix) {
   //   let type = this.getSimpleType();
@@ -97,10 +85,10 @@ export default class Field extends Type {
   }
 
   transform() {
-
+    return this;
   }
 
   validate() {
-
+    return this;
   }
 }

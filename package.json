@@ -7,7 +7,7 @@
   "main": "index.js",
   "scripts": {
     "test": "ratchet test",
-    "lint": "ratchet ling",
+    "lint": "ratchet lint",
     "ratchet": "ratchet"
   },
   "dependencies": {

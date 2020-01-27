@@ -44,7 +44,7 @@ export default {
     enum QuinIndexEnum { unique }
     enum QuinValidEnum { email }
     enum QuinRejectEnum { self change }
-    enum QuinTransformEnum { lowerCase upperCase titleCase }
+    enum QuinTransformEnum { lowerCase upperCase titleCase createdAt updatedAt }
     enum QuinOnDeleteEnum { cascade nullify restrict }
 
     input QuinIndexInput {
