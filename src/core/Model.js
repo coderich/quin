@@ -6,12 +6,15 @@ export default class Model extends Type {
     super(model);
     this.schema = schema;
     this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
-    // this.indexes =
     this.toString = () => `${this.getName()}`;
   }
 
   getFields() {
     return this.fields;
+  }
+
+  getFieldMap() {
+    return this.fields.reduce((prev, field) => Object.assign(prev, { [field.getName()]: field }), {});
   }
 
   getField(path) {
@@ -57,15 +60,15 @@ export default class Model extends Type {
   }
 
   getIndexes() {
-    return this.getDirectiveArg('indexes', 'on', []);
+    return this.getDirectiveArg('quin', 'indexes', []);
   }
 
   getDriver() {
-    return this.getDirectiveArg('driver', 'name', 'default');
+    return this.getDirectiveArg('quin', 'driver', 'default');
   }
 
   isHidden() {
-    return Boolean(this.getDirective('hidden'));
+    return Boolean(this.getDirectiveArg('quin', 'hidden'));
   }
 
   isVisible() {

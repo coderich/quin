@@ -10,7 +10,9 @@ export default class Field extends Type {
 
   getDataType() {
     const type = this.getType();
-    return this.isArray() ? [type] : type;
+    if (!this.isArray()) return type;
+    const isSet = this.getDirectiveArg('quin', 'restrict', '').indexOf('dupes') > -1;
+    return Object.assign([type], { isSet });
   }
 
   getSimpleType() {
@@ -81,11 +83,11 @@ export default class Field extends Type {
   }
 
   isImmutable() {
-    return this.getDirectiveArg('quin', 'reject', '').indexOf('change') > -1;
+    return this.getDirectiveArg('quin', 'restrict', '').indexOf('change') > -1;
   }
 
   isEmbedded() {
-    return Boolean(this.getDirective('embedded'));
+    return Boolean(this.getDirectiveArg('quin', 'embedded'));
   }
 
   transform() {

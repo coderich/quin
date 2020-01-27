@@ -27,7 +27,7 @@ export default class Type {
   }
 
   getAlias(defaultValue) {
-    return this.getDirectiveArg('alias', 'name', defaultValue || this.getName());
+    return this.getDirectiveArg('quin', 'alias', defaultValue || this.getName());
   }
 
   isArray() {

@@ -2,11 +2,10 @@ import Schema from '../../src/core/Schema';
 import typeDefs from '../typeDefs';
 
 const schema = new Schema(typeDefs);
-const [person, book, chapter] = schema.getModels();
-const [personFields, bookFields, chapterFields] = [person.getFields(), book.getFields(), chapter.getFields()];
+const { Person, Book, Chapter, Building, Library, Apartment, Color } = schema.getModelMap();
+const [personFields, bookFields] = [Person.getFields(), Book.getFields()];
 const [personId, personName, personAuthored,, personFriends] = personFields;
 const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookChapters] = bookFields;
-const [chapterId, chapterName, chapterBook] = chapterFields;
 
 describe('Schema', () => {
   test('sanity', () => {
@@ -15,47 +14,48 @@ describe('Schema', () => {
   });
 
   test('schema', () => {
-    expect(schema.getModel('Person')).toBe(person);
-    expect(schema.getModel('Book')).toBe(book);
+    expect(schema.getModel('Person')).toBe(Person);
+    expect(schema.getModel('Book')).toBe(Book);
+    expect(schema.getModel('Building')).toBe(Building);
   });
 
   test('personModel', () => {
-    expect(person.getName()).toBe('Person');
-    expect(person.getField('id')).toBe(personId);
-    expect(person.getField('name')).toBe(personName);
-    expect(person.getField('authored')).toBe(personAuthored);
-    expect(person.getField('authored.id')).toBe(bookId);
-    expect(person.getField('authored.name')).toBe(bookName);
-    expect(person.getDataRefFields()).toEqual([personAuthored, personFriends]);
-    expect(person.getEmbeddedArrayFields()).toEqual([personFriends]);
-    expect(person.getCountableFields()).toEqual([personAuthored, personFriends]);
-    expect(person.getScalarFields().length).toEqual(4);
-    expect(person.getCreateFields().length).toEqual(4);
-    expect(person.getUpdateFields().length).toEqual(4);
-    expect(person.getOnDeleteFields()).toEqual([personFriends]);
-    expect(person.getAlias()).toBe('user');
-    expect(person.getIndexes().length).toBe(1);
-    expect(person.getDriver()).toBe('default');
-    expect(person.isHidden()).toBe(false);
-    expect(person.isVisible()).toBe(true);
+    expect(Person.getName()).toBe('Person');
+    expect(Person.getField('id')).toBe(personId);
+    expect(Person.getField('name')).toBe(personName);
+    expect(Person.getField('authored')).toBe(personAuthored);
+    expect(Person.getField('authored.id')).toBe(bookId);
+    expect(Person.getField('authored.name')).toBe(bookName);
+    expect(Person.getDataRefFields()).toEqual([personAuthored, personFriends]);
+    expect(Person.getEmbeddedArrayFields()).toEqual([personFriends]);
+    expect(Person.getCountableFields()).toEqual([personAuthored, personFriends]);
+    expect(Person.getScalarFields().length).toEqual(4);
+    expect(Person.getCreateFields().length).toEqual(4);
+    expect(Person.getUpdateFields().length).toEqual(4);
+    expect(Person.getOnDeleteFields()).toEqual([personFriends]);
+    expect(Person.getAlias()).toBe('user');
+    expect(Person.getIndexes().length).toBe(1);
+    expect(Person.getDriver()).toBe('default');
+    expect(Person.isHidden()).toBe(false);
+    expect(Person.isVisible()).toBe(true);
   });
 
   test('bookModel', () => {
-    expect(book.getName()).toBe('Book');
-    expect(book.getField('author')).toBe(bookAuthor);
-    expect(book.getField('author.friends')).toBe(personFriends);
-    expect(book.getDataRefFields()).toEqual([bookAuthor, bookChapters]);
-    expect(book.getEmbeddedArrayFields()).toEqual([bookBids]);
-    expect(book.getCountableFields()).toEqual([bookChapters]);
-    expect(book.getScalarFields().length).toEqual(5);
-    expect(book.getCreateFields().length).toEqual(5);
-    expect(book.getUpdateFields().length).toEqual(4);
-    expect(book.getOnDeleteFields()).toEqual([bookAuthor]);
-    expect(book.getAlias()).toBe('Book');
-    expect(book.getIndexes().length).toBe(1);
-    expect(book.getDriver()).toBe('default');
-    expect(book.isHidden()).toBe(false);
-    expect(book.isVisible()).toBe(true);
+    expect(Book.getName()).toBe('Book');
+    expect(Book.getField('author')).toBe(bookAuthor);
+    expect(Book.getField('author.friends')).toBe(personFriends);
+    expect(Book.getDataRefFields()).toEqual([bookAuthor, bookChapters]);
+    expect(Book.getEmbeddedArrayFields()).toEqual([bookBids]);
+    expect(Book.getCountableFields()).toEqual([bookChapters]);
+    expect(Book.getScalarFields().length).toEqual(5);
+    expect(Book.getCreateFields().length).toEqual(5);
+    expect(Book.getUpdateFields().length).toEqual(4);
+    expect(Book.getOnDeleteFields()).toEqual([bookAuthor]);
+    expect(Book.getAlias()).toBe('Book');
+    expect(Book.getIndexes().length).toBe(1);
+    expect(Book.getDriver()).toBe('default');
+    expect(Book.isHidden()).toBe(false);
+    expect(Book.isVisible()).toBe(true);
   });
 
   test('personFields', () => {
@@ -67,7 +67,8 @@ describe('Schema', () => {
     expect(personName.getSimpleType()).toBe('String');
     expect(personName.getDataRef()).toBeNull();
     expect(personAuthored.getName()).toBe('authored');
-    expect(personAuthored.getDataType()).toEqual(['Book']);
+    expect(personAuthored.getDataType()).toContainEqual('Book'); // Since we append isSet for now
+    expect(personAuthored.getDataType().isSet).toBe(false);
     expect(personAuthored.getSimpleType()).toBe('Book');
     expect(personAuthored.getDataRef()).toBe('Book');
 
@@ -86,12 +87,10 @@ describe('Schema', () => {
     expect(personAuthored.isEmbedded()).toBe(false);
     expect(personAuthored.isRequired()).toBe(false);
     expect(personAuthored.getVirtualRef()).toBe('author');
-    expect(personAuthored.getVirtualModel()).toBe(book);
+    expect(personAuthored.getVirtualModel()).toBe(Book);
     expect(personAuthored.getVirtualField()).toBe(bookAuthor);
 
     // // Options
-    // expect(personName.getTransforms()).toBe(false);
-    // expect(personName.getRules()).toBe(false);
     // expect(personName.getOnDelete()).toBe(false);
   });
 
@@ -110,12 +109,20 @@ describe('Schema', () => {
     expect(bookAuthor.isImmutable()).toBe(true);
     expect(bookAuthor.isRequired()).toBe(true);
     expect(bookChapters.getVirtualRef()).toBe('book');
-    expect(bookChapters.getVirtualModel()).toBe(chapter);
-    expect(bookChapters.getVirtualField()).toBe(chapterBook);
+    expect(bookChapters.getVirtualModel()).toBe(Chapter);
+    expect(bookChapters.getVirtualField()).toBe(Chapter.getField('book'));
 
     // // Options
-    // expect(personName.getTransforms()).toBe(false);
-    // expect(personName.getRules()).toBe(false);
     // expect(personName.getOnDelete()).toBe(false);
+  });
+
+  test('otherTests', () => {
+    const { isDefault } = Color.getFieldMap();
+    const { tenants } = Building.getFieldMap();
+    expect(tenants.getDataType()).toContainEqual('Person');
+    expect(tenants.getDataType().isSet).toBe(true);
+    expect(Library.getField('building').isEmbedded()).toBe(true);
+    expect(Apartment.getField('building').isEmbedded()).toBe(true);
+    expect(isDefault.getAlias()).toBe('is_default');
   });
 });

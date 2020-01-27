@@ -22,6 +22,10 @@ export default class Schema {
     return this.models;
   }
 
+  getModelMap() {
+    return this.models.reduce((prev, model) => Object.assign(prev, { [model.getName()]: model }), {});
+  }
+
   getModel(name) {
     return this.models.find(model => model.getName() === name);
   }
