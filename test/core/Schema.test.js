@@ -32,7 +32,7 @@ describe('Schema', () => {
     expect(person.getScalarFields().length).toEqual(4);
     expect(person.getCreateFields().length).toEqual(4);
     expect(person.getUpdateFields().length).toEqual(4);
-    expect(person.getOnDeleteFields()).toEqual([]);
+    expect(person.getOnDeleteFields()).toEqual([personFriends]);
     expect(person.getAlias()).toBe('user');
     expect(person.getIndexes().length).toBe(1);
     expect(person.getDriver()).toBe('default');

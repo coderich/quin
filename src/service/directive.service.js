@@ -1,26 +1,11 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools';
 
-class VirtualDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-  }
-}
-
-class ImmutableDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-  }
-}
-
-class OnDeleteDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-  }
-}
-
 class IndexesDirective extends SchemaDirectiveVisitor {
   visitObject(type) { // eslint-disable-line
   }
 }
 
-class RulesDirective extends SchemaDirectiveVisitor {
+class QuinDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field, details) { // eslint-disable-line
   }
 }
@@ -41,6 +26,7 @@ class HiddenDirective extends SchemaDirectiveVisitor {
 
 export default {
   typeDefs: `
+    scalar QuinMixed
     enum QuinIndexEnum { unique }
     enum QuinValidEnum { email }
     enum QuinRejectEnum { self change }
@@ -53,28 +39,27 @@ export default {
       fields: [String!]!
     }
 
-    directive @virtual(by: String!) on FIELD_DEFINITION
-    directive @immutable on FIELD_DEFINITION
-    directive @onDelete(op: QuinOnDeleteEnum!) on FIELD_DEFINITION
     directive @alias(name: String!) on OBJECT | FIELD_DEFINITION
     directive @indexes(on: [QuinIndexInput!]!) on OBJECT
     directive @hidden on OBJECT | FIELD_DEFINITION
-    directive @rules(
-      allow: [String!]
-      deny: [String!]
-      range: [Int!]
-      valid: [QuinValidEnum!]
+
+    directive @quin(
+      allow: [QuinMixed!]
+      deny: [QuinMixed!]
       reject: [QuinRejectEnum!]
+      range: [Int!]
+      distinct: [QuinMixed!]
+      valid: [QuinValidEnum!]
       transform: [QuinTransformEnum!]
+      materializeBy: String
+      onDelete: QuinOnDeleteEnum
     ) on FIELD_DEFINITION
   `,
+
   schemaDirectives: {
-    virtual: VirtualDirective,
-    immutable: ImmutableDirective,
-    onDelete: OnDeleteDirective,
     alias: AliasDirective,
     indexes: IndexesDirective,
     hidden: HiddenDirective,
-    rules: RulesDirective,
+    quin: QuinDirective,
   },
 };

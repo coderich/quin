@@ -4,10 +4,10 @@ export default `
     @indexes(on: [{ name: "uix_person_name", type: unique, fields: ["name"] }])
   {
     id: ID!
-    name: String! @rules(transform: titleCase)
-    authored: [Book] @virtual(by: "author")
-    emailAddress: String! @rules(valid: email)
-    friends: [Person]
+    name: String! @quin(transform: titleCase)
+    authored: [Book] @quin(materializeBy: "author")
+    emailAddress: String! @quin(valid: email)
+    friends: [Person] @quin(onDelete: cascade)
     status: String
   }
 
@@ -15,21 +15,21 @@ export default `
     @indexes(on: [{ name: "uix_book", type: unique, fields: ["name", "author"] }])
   {
     id: ID!
-    name: String! @rules(transform: titleCase, deny: "The Bible")
-    price: Float! @rules(range: [0, 100])
-    author: Person! @rules(reject: change) @onDelete(op: cascade)
+    name: String! @quin(transform: titleCase, deny: "The Bible")
+    price: Float! @quin(range: [0, 100])
+    author: Person! @quin(reject: change, onDelete: cascade)
     bestSeller: Boolean
     bids: [Int]
-    chapters: [Chapter] @virtual(by: "book")
+    chapters: [Chapter] @quin(materializeBy: "book")
   }
 
   type Chapter
     @indexes(on: [{name: "uix_chapter", type: unique, fields: ["name", "book"]}])
   {
     id: ID!
-    name: String! @rules(transform: titleCase)
-    book: Book!
-    pages: [Page] @virtual(by: "chapter")
+    name: String! @quin(transform: titleCase)
+    book: Book! @quin(onDelete: restrict)
+    pages: [Page] @quin(materializeBy: "chapter")
   }
 
   type Page
@@ -42,38 +42,39 @@ export default `
   }
 
   type BookStore {
-    name: String! @rules(transform: titleCase)
+    name: String! @quin(transform: titleCase)
     location: String
-    books: [Book] @onDelete(op: cascade)
-    building: Building! @onDelete(op: cascade)
+    books: [Book] @quin(onDelete: cascade)
+    building: Building! @quin(onDelete: cascade)
   }
 
   type Library {
-    name: String! @rules(transform: titleCase)
+    name: String! @quin(transform: titleCase)
     location: String,
-    books: [Book] @onDelete(op: cascade)
-    building: Building! @onDelete(op: cascade)
+    books: [Book] @quin(onDelete: cascade)
+    building: Building! @quin(onDelete: cascade)
   }
 
   type Apartment {
-    name: String! @rules(transform: titleCase)
+    name: String! @quin(transform: titleCase)
     location: String
-    building: Building! @onDelete(op: cascade)
+    building: Building! @quin(onDelete: cascade)
   }
 
   type Building {
     year: Int
-    type: String! @rules(allow: ["home", "office", "business"])
-    tenants: Person @onDelete(op: cascade)
-    landlord: Person @onDelete(op: nullify)
+    type: String! @quin(allow: ["home", "office", "business"])
+    tenants: Person @quin(onDelete: cascade)
+    landlord: Person @quin(onDelete: nullify)
   }
 
   type Color {
-    type: String! @rules(allow: ["blue", "red", "green", "purple"])
+    type: String! @quin(allow: ["blue", "red", "green", "purple"])
+    isDefault: Boolean @quin(distinct: true)
   }
 
   type Art {
-    name: String! @rules(transform: titleCase)
+    name: String! @quin(transform: titleCase)
     bids: [Float]
   }
 `;

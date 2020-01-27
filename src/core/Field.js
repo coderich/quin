@@ -49,7 +49,7 @@ export default class Field extends Type {
   }
 
   getVirtualRef() {
-    return this.getDirectiveArg('virtual', 'by');
+    return this.getDirectiveArg('quin', 'materializeBy');
   }
 
   getVirtualModel() {
@@ -61,7 +61,7 @@ export default class Field extends Type {
   }
 
   getOnDelete() {
-    return Boolean(this.getDirective('onDelete'));
+    return Boolean(this.getDirectiveArg('quin', 'onDelete'));
   }
 
   isCreateField() {
@@ -73,11 +73,15 @@ export default class Field extends Type {
   }
 
   isVirtual() {
-    return Boolean(this.getDirective('virtual'));
+    return this.isMaterialized();
+  }
+
+  isMaterialized() {
+    return Boolean(this.getDirectiveArg('quin', 'materializeBy'));
   }
 
   isImmutable() {
-    return this.getDirectiveArg('rules', 'reject', '').indexOf('change') > -1;
+    return this.getDirectiveArg('quin', 'reject', '').indexOf('change') > -1;
   }
 
   isEmbedded() {
