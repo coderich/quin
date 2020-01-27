@@ -29,27 +29,27 @@ export default class Field extends Type {
   //   }
   // }
 
-  getGQLType(suffix) {
-    let type = this.getSimpleType();
-    if (suffix && !isScalarDataType(type)) type = this.options.embedded ? `${type}${suffix}` : 'ID';
-    if (this.options.enum) type = `${this.model.getName()}${ucFirst(this.getName())}Enum`;
-    type = this.isArray() ? `[${type}]` : type;
-    if (suffix !== 'InputUpdate' && this.isRequired()) type += '!';
-    return type;
-  }
+  // getGQLType(suffix) {
+  //   let type = this.getSimpleType();
+  //   if (suffix && !isScalarDataType(type)) type = this.options.embedded ? `${type}${suffix}` : 'ID';
+  //   if (this.options.enum) type = `${this.model.getName()}${ucFirst(this.getName())}Enum`;
+  //   type = this.isArray() ? `[${type}]` : type;
+  //   if (suffix !== 'InputUpdate' && this.isRequired()) type += '!';
+  //   return type;
+  // }
 
-  getGQLDefinition() {
-    const fieldName = this.getName();
-    const type = this.getGQLType();
-    const ref = this.getDataRef();
+  // getGQLDefinition() {
+  //   const fieldName = this.getName();
+  //   const type = this.getGQLType();
+  //   const ref = this.getDataRef();
 
-    if (ref) {
-      if (this.isArray()) return `${fieldName}(first: Int after: String lfield: Int before: String query: ${ref}InputQuery): Connection`;
-      return `${fieldName}(query: ${ref}InputQuery): ${type}`;
-    }
+  //   if (ref) {
+  //     if (this.isArray()) return `${fieldName}(first: Int after: String lfield: Int before: String query: ${ref}InputQuery): Connection`;
+  //     return `${fieldName}(query: ${ref}InputQuery): ${type}`;
+  //   }
 
-    return `${fieldName}: ${type}`;
-  }
+  //   return `${fieldName}: ${type}`;
+  // }
 
   getDataRef() {
     const ref = this.getSimpleType();
@@ -60,12 +60,8 @@ export default class Field extends Type {
     return this.schema.getModel(this.getDataRef());
   }
 
-  getAlias(alias) {
-    return this.options.alias || alias || this.getName();
-  }
-
   getVirtualRef() {
-    return this.options.by;
+    return this.getDirectiveArg('virtual', 'by');
   }
 
   getVirtualModel() {
@@ -74,14 +70,6 @@ export default class Field extends Type {
 
   getVirtualField() {
     return this.getVirtualModel().getField(this.getVirtualRef());
-  }
-
-  getTransforms() {
-    return this.options.transforms;
-  }
-
-  getRules() {
-    return this.options.rules;
   }
 
   getOnDelete() {
@@ -101,11 +89,18 @@ export default class Field extends Type {
   }
 
   isImmutable() {
-    return Boolean(this.getDirective('immutable'));
+    return this.getDirectiveArg('rules', 'reject', '').indexOf('change') > -1;
   }
 
-  // TODO: These are broken
   isEmbedded() {
-    return Boolean(this.options.embedded);
+    return Boolean(this.getDirective('embedded'));
+  }
+
+  transform() {
+
+  }
+
+  validate() {
+
   }
 }

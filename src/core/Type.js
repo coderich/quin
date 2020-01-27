@@ -26,6 +26,10 @@ export default class Type {
     return directive.getArg(arg) || defaultValue;
   }
 
+  getAlias(defaultValue) {
+    return this.getDirectiveArg('alias', 'name', defaultValue || this.getName());
+  }
+
   isArray() {
     return isListType(this.ast.type);
   }

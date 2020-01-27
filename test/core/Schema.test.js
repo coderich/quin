@@ -2,10 +2,11 @@ import Schema from '../../src/core/Schema';
 import typeDefs from '../typeDefs';
 
 const schema = new Schema(typeDefs);
-const [person, book] = schema.getModels();
-const [personFields, bookFields] = [person.getFields(), book.getFields()];
+const [person, book, chapter] = schema.getModels();
+const [personFields, bookFields, chapterFields] = [person.getFields(), book.getFields(), chapter.getFields()];
 const [personId, personName, personAuthored,, personFriends] = personFields;
 const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookChapters] = bookFields;
+const [chapterId, chapterName, chapterBook] = chapterFields;
 
 describe('Schema', () => {
   test('sanity', () => {
@@ -23,6 +24,8 @@ describe('Schema', () => {
     expect(person.getField('id')).toBe(personId);
     expect(person.getField('name')).toBe(personName);
     expect(person.getField('authored')).toBe(personAuthored);
+    expect(person.getField('authored.id')).toBe(bookId);
+    expect(person.getField('authored.name')).toBe(bookName);
     expect(person.getDataRefFields()).toEqual([personAuthored, personFriends]);
     expect(person.getEmbeddedArrayFields()).toEqual([personFriends]);
     expect(person.getCountableFields()).toEqual([personAuthored, personFriends]);
@@ -33,12 +36,14 @@ describe('Schema', () => {
     expect(person.getAlias()).toBe('user');
     expect(person.getIndexes().length).toBe(1);
     expect(person.getDriver()).toBe('default');
+    expect(person.isHidden()).toBe(false);
+    expect(person.isVisible()).toBe(true);
   });
 
   test('bookModel', () => {
     expect(book.getName()).toBe('Book');
     expect(book.getField('author')).toBe(bookAuthor);
-
+    expect(book.getField('author.friends')).toBe(personFriends);
     expect(book.getDataRefFields()).toEqual([bookAuthor, bookChapters]);
     expect(book.getEmbeddedArrayFields()).toEqual([bookBids]);
     expect(book.getCountableFields()).toEqual([bookChapters]);
@@ -48,7 +53,9 @@ describe('Schema', () => {
     expect(book.getOnDeleteFields()).toEqual([bookAuthor]);
     expect(book.getAlias()).toBe('Book');
     expect(book.getIndexes().length).toBe(1);
-    expect(person.getDriver()).toBe('default');
+    expect(book.getDriver()).toBe('default');
+    expect(book.isHidden()).toBe(false);
+    expect(book.isVisible()).toBe(true);
   });
 
   test('personFields', () => {
@@ -68,12 +75,17 @@ describe('Schema', () => {
     expect(personName.isVirtual()).toBe(false);
     expect(personName.isImmutable()).toBe(false);
     expect(personName.isRequired()).toBe(true);
+    expect(personName.isEmbedded()).toBe(false);
 
     expect(personAuthored.isArray()).toBe(true);
     expect(personAuthored.isScalar()).toBe(false);
     expect(personAuthored.isVirtual()).toBe(true);
     expect(personAuthored.isImmutable()).toBe(false);
+    expect(personAuthored.isEmbedded()).toBe(false);
     expect(personAuthored.isRequired()).toBe(false);
+    expect(personAuthored.getVirtualRef()).toBe('author');
+    expect(personAuthored.getVirtualModel()).toBe(book);
+    expect(personAuthored.getVirtualField()).toBe(bookAuthor);
 
     // // Options
     // expect(personName.getTransforms()).toBe(false);
@@ -95,6 +107,9 @@ describe('Schema', () => {
     expect(bookAuthor.isVirtual()).toBe(false);
     expect(bookAuthor.isImmutable()).toBe(true);
     expect(bookAuthor.isRequired()).toBe(true);
+    expect(bookChapters.getVirtualRef()).toBe('book');
+    expect(bookChapters.getVirtualModel()).toBe(chapter);
+    expect(bookChapters.getVirtualField()).toBe(chapterBook);
 
     // // Options
     // expect(personName.getTransforms()).toBe(false);

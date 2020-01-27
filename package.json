@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "graphql": "^14.6.0",
-    "graphql-tools": "^4.0.6"
+    "graphql-tools": "^4.0.6",
+    "lodash": "^4.17.15",
+    "object-hash": "^2.0.1",
+    "validator": "^12.2.0"
   },
   "devDependencies": {
     "@coderich/ratchet": "^1.2.5"

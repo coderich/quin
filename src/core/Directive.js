@@ -9,11 +9,15 @@ export default class Directive {
 
   getArgs() {
     return this.ast.arguments.reduce((prev, { name, value }) => {
-      return Object.assign(prev, { [name.value]: value.value || value.values });
+      return Object.assign(prev, { [name.value]: Directive.parseValue(value) });
     }, {});
   }
 
   getArg(arg) {
     return this.getArgs()[arg];
+  }
+
+  static parseValue(value) {
+    return value.value || value.values.map(v => v.value);
   }
 }

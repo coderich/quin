@@ -56,10 +56,6 @@ export default class Model extends Type {
     return this.fields.filter(field => field.isScalar());
   }
 
-  getAlias() {
-    return this.getDirectiveArg('alias', 'name', this.getName());
-  }
-
   getIndexes() {
     return this.getDirectiveArg('indexes', 'on', []);
   }
@@ -69,7 +65,7 @@ export default class Model extends Type {
   }
 
   isHidden() {
-    return this.options.hideFromApi;
+    return Boolean(this.getDirective('hidden'));
   }
 
   isVisible() {
@@ -79,5 +75,13 @@ export default class Model extends Type {
   referentialIntegrity(refs) {
     if (refs) this.referentials = refs;
     return this.referentials;
+  }
+
+  transform() {
+    this.fields.forEach(field => field.transform());
+  }
+
+  validate() {
+    this.fields.forEach(field => field.validate());
   }
 }
