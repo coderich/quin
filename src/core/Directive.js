@@ -1,35 +1,19 @@
-import { SchemaDirectiveVisitor } from 'graphql-tools';
+export default class Directive {
+  constructor(ast) {
+    this.ast = ast;
+  }
 
-class VirtualDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-    // const { name, resolve = root => root[name], type } = field;
-    // const returnType = type.toString().replace(/[[\]!]/g, '');
+  getName() {
+    return this.ast.name.value;
+  }
 
-    // field.resolve = async function resolver(root, args, context, info) {
-    //   const payload = await resolve.call(this, root, args, context, info);
-    // };
+  getArgs() {
+    return this.ast.arguments.reduce((prev, { name, value }) => {
+      return Object.assign(prev, { [name.value]: value.value || value.values });
+    }, {});
+  }
+
+  getArg(arg) {
+    return this.getArgs()[arg];
   }
 }
-
-class ImmutableDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-  }
-}
-
-class OnDeleteDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field, details) { // eslint-disable-line
-  }
-}
-
-export default {
-  typeDefs: `
-    directive @virtual(by: String!) on FIELD_DEFINITION
-    directive @immutable on FIELD_DEFINITION
-    directive @onDelete(op: String!) on FIELD_DEFINITION
-  `,
-  schemaDirectives: {
-    virtual: VirtualDirective,
-    immutable: ImmutableDirective,
-    onDelete: OnDeleteDirective,
-  },
-};

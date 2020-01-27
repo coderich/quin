@@ -1,12 +1,12 @@
 import { GraphQLObjectType } from 'graphql';
 import { makeExecutableSchema } from 'graphql-tools';
 import Model from './Model';
-import Directive from './Directive';
+import DirectiveService from '../service/directive.service';
 
 export default class Schema {
   constructor(typeDef) {
-    const typeDefs = [Directive.typeDefs, typeDef];
-    const { schemaDirectives } = Directive;
+    const typeDefs = [DirectiveService.typeDefs, typeDef];
+    const { schemaDirectives } = DirectiveService;
     this.schema = makeExecutableSchema({ typeDefs, schemaDirectives });
     this.models = this.getCustomTypes().map(model => new Model(this, model));
   }

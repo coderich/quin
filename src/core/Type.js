@@ -1,25 +1,33 @@
 import { isListType, isNonNullType, getNamedType } from 'graphql';
 import { isScalarDataType } from '../service/app.service';
+import Directive from './Directive';
 
 export default class Type {
-  constructor(type) {
-    this.type = type;
+  constructor(ast) {
+    this.ast = ast;
+    this.directives = this.ast.astNode.directives.map(directive => new Directive(directive));
   }
 
   getName() {
-    return this.type.name;
+    return this.ast.name;
   }
 
   getType() {
-    return `${getNamedType(this.type.type)}`;
+    return `${getNamedType(this.ast.type)}`;
   }
 
   getDirective(name) {
-    return this.type.astNode.directives.find(directive => directive.name.value === name);
+    return this.directives.find(directive => directive.getName() === name);
+  }
+
+  getDirectiveArg(name, arg, defaultValue) {
+    const directive = this.getDirective(name);
+    if (!directive) return defaultValue;
+    return directive.getArg(arg) || defaultValue;
   }
 
   isArray() {
-    return isListType(this.type.type);
+    return isListType(this.ast.type);
   }
 
   isScalar() {
@@ -27,6 +35,6 @@ export default class Type {
   }
 
   isRequired() {
-    return isNonNullType(this.type.type);
+    return isNonNullType(this.ast.type);
   }
 }

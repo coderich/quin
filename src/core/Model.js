@@ -6,6 +6,7 @@ export default class Model extends Type {
     super(model);
     this.schema = schema;
     this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
+    // this.indexes =
     this.toString = () => `${this.getName()}`;
   }
 
@@ -56,19 +57,15 @@ export default class Model extends Type {
   }
 
   getAlias() {
-    return this.options.alias || this.getName();
+    return this.getDirectiveArg('alias', 'name', this.getName());
   }
 
   getIndexes() {
-    return this.options.indexes || [];
+    return this.getDirectiveArg('indexes', 'on', []);
   }
 
   getDriver() {
-    return this.driver.dao;
-  }
-
-  getDriverName() {
-    return this.options.driver || 'default';
+    return this.getDirectiveArg('driver', 'name', 'default');
   }
 
   isHidden() {

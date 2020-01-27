@@ -4,13 +4,13 @@ import typeDefs from '../typeDefs';
 const schema = new Schema(typeDefs);
 const [person, book] = schema.getModels();
 const [personFields, bookFields] = [person.getFields(), book.getFields()];
-const [personId, personName, personAuthored] = personFields;
-const [,, bookAuthor, bookPrice] = bookFields;
+const [personId, personName, personAuthored,, personFriends] = personFields;
+const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookChapters] = bookFields;
 
 describe('Schema', () => {
   test('sanity', () => {
-    expect(personFields.length).toBe(5);
-    expect(bookFields.length).toBe(4);
+    expect(personFields.length).toBe(6);
+    expect(bookFields.length).toBe(7);
   });
 
   test('schema', () => {
@@ -23,25 +23,32 @@ describe('Schema', () => {
     expect(person.getField('id')).toBe(personId);
     expect(person.getField('name')).toBe(personName);
     expect(person.getField('authored')).toBe(personAuthored);
-    expect(person.getDataRefFields()).toEqual([personAuthored]);
-    expect(person.getEmbeddedArrayFields()).toEqual([]);
-    expect(person.getCountableFields()).toEqual([personAuthored]);
+    expect(person.getDataRefFields()).toEqual([personAuthored, personFriends]);
+    expect(person.getEmbeddedArrayFields()).toEqual([personFriends]);
+    expect(person.getCountableFields()).toEqual([personAuthored, personFriends]);
     expect(person.getScalarFields().length).toEqual(4);
-    expect(person.getCreateFields().length).toEqual(3);
-    expect(person.getUpdateFields().length).toEqual(3);
+    expect(person.getCreateFields().length).toEqual(4);
+    expect(person.getUpdateFields().length).toEqual(4);
     expect(person.getOnDeleteFields()).toEqual([]);
+    expect(person.getAlias()).toBe('user');
+    expect(person.getIndexes().length).toBe(1);
+    expect(person.getDriver()).toBe('default');
   });
 
   test('bookModel', () => {
     expect(book.getName()).toBe('Book');
     expect(book.getField('author')).toBe(bookAuthor);
-    expect(book.getDataRefFields()).toEqual([bookAuthor]);
-    expect(book.getEmbeddedArrayFields()).toEqual([]);
-    expect(book.getCountableFields()).toEqual([]);
-    expect(book.getScalarFields().length).toEqual(3);
-    expect(book.getCreateFields().length).toEqual(3);
-    expect(book.getUpdateFields().length).toEqual(2);
+
+    expect(book.getDataRefFields()).toEqual([bookAuthor, bookChapters]);
+    expect(book.getEmbeddedArrayFields()).toEqual([bookBids]);
+    expect(book.getCountableFields()).toEqual([bookChapters]);
+    expect(book.getScalarFields().length).toEqual(5);
+    expect(book.getCreateFields().length).toEqual(5);
+    expect(book.getUpdateFields().length).toEqual(4);
     expect(book.getOnDeleteFields()).toEqual([bookAuthor]);
+    expect(book.getAlias()).toBe('Book');
+    expect(book.getIndexes().length).toBe(1);
+    expect(person.getDriver()).toBe('default');
   });
 
   test('personFields', () => {
