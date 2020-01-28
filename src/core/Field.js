@@ -119,13 +119,16 @@ export default class Field extends Type {
   transform(value, mapper) {
     if (mapper == null) mapper = {};
 
-    return this.transforms.reduce((prev, t) => {
-      return t(prev);
+    return this.transforms.reduce((prev, transform) => {
+      return transform(prev, mapper[transform.name]);
     }, value);
   }
 
   validate(value, mapper) {
     if (mapper == null) mapper = {};
-    return Promise.all(this.rules.map(r => r(value)));
+
+    return Promise.all(this.rules.map((rule) => {
+      return rule(value, mapper[rule.name]);
+    }));
   }
 }

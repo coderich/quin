@@ -67,7 +67,11 @@ describe('TransformService', () => {
   });
 
   test('Required', () => {
-    expect(() => RuleService.required()()).not.toThrow();
-    expect(() => RuleService.required(true)()).toThrow();
+    const required = RuleService.required();
+    expect(() => required()).toThrow();
+    expect(() => required(null)).toThrow();
+    expect(() => required(undefined)).toThrow();
+    expect(() => required({})).not.toThrow();
+    expect(() => required({ name: 'Rich' })).not.toThrow();
   });
 });

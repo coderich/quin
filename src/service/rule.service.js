@@ -37,9 +37,9 @@ export const email = () => (val, cmp = v => !isEmail(v)) => {
   if (cmp(val)) throw new EmailRuleError();
 };
 
-export const required = strict => (val, cmp = v => (strict ? v == null : v === null)) => {
+export const required = () => Object.defineProperty((val, cmp = v => v == null) => {
   if (cmp(val)) throw new RequiredRuleError();
-};
+}, 'name', { value: 'required' });
 
 export const selfless = () => (val, cmp = v => false) => {
   if (val == null) return;

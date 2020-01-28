@@ -13,17 +13,19 @@ describe('Model', () => {
   });
 
   test('Rules', () => {
-    const required = RuleService.required(true);
-    expect(() => Person.validate({ name: 'rich' })).not.toThrow();
+    const required = v => v === null;
+    expect(() => Person.validate({ name: 'rich' })).toThrow(RuleService.RequiredRuleError);
     expect(() => Person.validate({ name: 'rich', emailAddress: 'me@' })).toThrow(RuleService.EmailRuleError);
-    expect(() => Person.validate({ name: 'rich' }, { required })).toThrow(RuleService.RequiredRuleError);
+    expect(() => Person.validate({ name: 'rich' }, { required })).not.toThrow();
+    expect(() => Person.validate({ name: 'rich', emailAddress: 'me@me.com' })).not.toThrow();
 
-    expect(() => Book.validate()).not.toThrow();
-    expect(() => Book.validate(null)).not.toThrow();
-    expect(() => Book.validate(null, { required })).toThrow(RuleService.RequiredRuleError);
-    expect(() => Book.validate({ name: 'book' })).not.toThrow();
-    expect(() => Book.validate({ name: 'the bible' })).toThrow(RuleService.DenyRuleError);
-    expect(() => Book.validate({ price: '50.55' })).not.toThrow();
-    expect(() => Book.validate({ price: '150.55' })).toThrow(RuleService.RangeRuleError);
+    expect(() => Book.validate()).toThrow(RuleService.RequiredRuleError);
+    expect(() => Book.validate(null)).toThrow(RuleService.RequiredRuleError);
+    expect(() => Book.validate({ name: 'book' })).toThrow(RuleService.RequiredRuleError);
+    expect(() => Book.validate({ price: '50.55' })).toThrow(RuleService.RequiredRuleError);
+    expect(() => Book.validate({ name: 'the bible' }, { required })).toThrow(RuleService.DenyRuleError);
+    expect(() => Book.validate({ price: '150.55' }, { required })).toThrow(RuleService.RangeRuleError);
+    expect(() => Book.validate({ price: '50.55' }, { required })).not.toThrow();
+    expect(() => Book.validate(null, { required })).not.toThrow();
   });
 });

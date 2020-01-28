@@ -98,11 +98,11 @@ export default class Model extends Type {
     const newData = this.transform(data, mapper);
 
     // Required
-    const { required: thunk = required() } = mapper;
+    const thunk = required();
 
-    this.getFields().filter(field => field.isRequired()).forEach((field) => {
+    this.getFields().filter(field => field.getType() !== 'ID' && field.isRequired()).forEach((field) => {
       const fieldName = field.getName();
-      thunk(newData[fieldName]);
+      thunk(newData[fieldName], mapper.required);
     });
 
     // Rules
