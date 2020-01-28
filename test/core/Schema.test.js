@@ -35,7 +35,7 @@ describe('Schema', () => {
     expect(Person.getUpdateFields().length).toEqual(4);
     expect(Person.getOnDeleteFields()).toEqual([personFriends]);
     expect(Person.getAlias()).toBe('user');
-    expect(Person.getIndexes()).toEqual([{ name: 'uix_person_name', type: 'unique', on: 'name' }]);
+    expect(Person.getIndexes()).toEqual([{ name: 'uix_person_name', type: 'unique', on: ['name'] }]);
     expect(Person.getDriver()).toBe('default');
     expect(Person.isHidden()).toBe(false);
     expect(Person.isVisible()).toBe(true);
@@ -129,7 +129,7 @@ describe('Schema', () => {
     expect(Building.isHidden()).toBe(true);
     expect(Page.getIndexes()).toEqual([
       { name: 'uix_page', type: 'unique', on: ['number', 'chapter'] },
-      { name: 'uix_page_verbage', type: 'unique', on: 'verbage' },
+      { name: 'uix_page_verbage', type: 'unique', on: ['verbage'] },
     ]);
   });
 });

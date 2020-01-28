@@ -60,7 +60,10 @@ export default class Model extends Type {
   }
 
   getIndexes() {
-    return this.getDirectiveArg('quin', 'indexes', []);
+    return this.getDirectiveArg('quin', 'indexes', []).map((index) => {
+      if (!Array.isArray(index.on)) index.on = [index.on];
+      return index;
+    });
   }
 
   getDriver() {
@@ -77,7 +80,6 @@ export default class Model extends Type {
 
   referentialIntegrity(refs) {
     if (refs) this.referentials = refs;
-    // console.log(this.referentials.map(ref => `${ref.model}:${ref.field}:${ref.isArray}:${ref.op}`));
     return this.referentials;
   }
 
