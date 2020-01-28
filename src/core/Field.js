@@ -88,6 +88,14 @@ export default class Field extends Type {
     return this.getVirtualModel().getField(this.getVirtualRef());
   }
 
+  getRules() {
+    return this.rules;
+  }
+
+  getTransforms() {
+    return this.transforms;
+  }
+
   getOnDelete() {
     return this.getDirectiveArg('quin', 'onDelete');
   }

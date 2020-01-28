@@ -2,7 +2,7 @@ import Schema from '../../src/core/Schema';
 import typeDefs from '../typeDefs';
 
 const schema = new Schema(typeDefs);
-const { Person, Book, Chapter, Building, Library, Apartment, Color } = schema.getModelMap();
+const { Person, Book, Chapter, Page, Building, Library, Apartment, Color } = schema.getModelMap();
 const [personFields, bookFields] = [Person.getFields(), Book.getFields()];
 const [personId, personName, personAuthored,, personFriends] = personFields;
 const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookChapters] = bookFields;
@@ -35,7 +35,7 @@ describe('Schema', () => {
     expect(Person.getUpdateFields().length).toEqual(4);
     expect(Person.getOnDeleteFields()).toEqual([personFriends]);
     expect(Person.getAlias()).toBe('user');
-    expect(Person.getIndexes().length).toBe(1);
+    expect(Person.getIndexes()).toEqual([{ name: 'uix_person_name', type: 'unique', on: 'name' }]);
     expect(Person.getDriver()).toBe('default');
     expect(Person.isHidden()).toBe(false);
     expect(Person.isVisible()).toBe(true);
@@ -54,7 +54,7 @@ describe('Schema', () => {
     expect(Book.getUpdateFields().length).toEqual(4);
     expect(Book.getOnDeleteFields()).toEqual([bookAuthor]);
     expect(Book.getAlias()).toBe('Book');
-    expect(Book.getIndexes().length).toBe(1);
+    expect(Book.getIndexes()).toEqual([{ name: 'uix_book', type: 'unique', on: ['name', 'author'] }]);
     expect(Book.getDriver()).toBe('default');
     expect(Book.isHidden()).toBe(false);
     expect(Book.isVisible()).toBe(true);
@@ -127,5 +127,9 @@ describe('Schema', () => {
     expect(Apartment.getField('building').isEmbedded()).toBe(true);
     expect(isDefault.getAlias()).toBe('is_default');
     expect(Building.isHidden()).toBe(true);
+    expect(Page.getIndexes()).toEqual([
+      { name: 'uix_page', type: 'unique', on: ['number', 'chapter'] },
+      { name: 'uix_page_verbage', type: 'unique', on: 'verbage' },
+    ]);
   });
 });

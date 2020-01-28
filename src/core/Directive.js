@@ -18,6 +18,9 @@ export default class Directive {
   }
 
   static parseValue(value) {
-    return value.value || value.values.map(v => v.value);
+    if (value.value !== undefined) return value.value;
+    if (value.values !== undefined) return value.values.map(v => Directive.parseValue(v));
+    if (value.fields !== undefined) return value.fields.reduce((prev, f) => Object.assign(prev, { [Directive.parseValue(f.name)]: Directive.parseValue(f.value) }), {});
+    return value;
   }
 }

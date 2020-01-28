@@ -32,7 +32,10 @@ export default `
   }
 
   type Page
-    @quin(indexes: [{name: "uix_page", type: unique, on: ["number", "chapter"]}])
+    @quin(indexes: [
+      {name: "uix_page", type: unique, on: ["number", "chapter"]}
+      {name: "uix_page_verbage", type: unique, on: "verbage"}
+    ])
   {
     id: ID!
     number: Int!
