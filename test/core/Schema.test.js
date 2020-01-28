@@ -14,6 +14,7 @@ describe('Schema', () => {
   });
 
   test('schema', () => {
+    expect(schema.getModels().length).toBe(10);
     expect(schema.getModel('Person')).toBe(Person);
     expect(schema.getModel('Book')).toBe(Book);
     expect(schema.getModel('Building')).toBe(Building);
@@ -124,5 +125,6 @@ describe('Schema', () => {
     expect(Library.getField('building').isEmbedded()).toBe(true);
     expect(Apartment.getField('building').isEmbedded()).toBe(true);
     expect(isDefault.getAlias()).toBe('is_default');
+    expect(Building.isHidden()).toBe(true);
   });
 });

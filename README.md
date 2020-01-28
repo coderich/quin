@@ -1,4 +1,2 @@
-# @coderich/quin
-### The quintessential graphql schema.
-
-**Quin**
+# Quin
+### The quintessential directive for your GraphQL schema.

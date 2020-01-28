@@ -1,7 +1,6 @@
 export default `
   type Person
     @quin(alias: "user", indexes: [{ name: "uix_person_name", type: unique, on: "name" }])
-    # @quin(alias: "user")
   {
     id: ID!
     name: String! @quin(transform: titleCase)
@@ -64,7 +63,9 @@ export default `
     building: Building! @quin(embedded: true, onDelete: cascade)
   }
 
-  type Building {
+  type Building
+    @quin(hidden: true)
+  {
     id: ID!
     year: Int
     type: String! @quin(allow: ["home", "office", "business"])

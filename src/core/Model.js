@@ -80,11 +80,15 @@ export default class Model extends Type {
     return this.referentials;
   }
 
-  transform() {
-    this.fields.forEach(field => field.transform());
+  transform(data) {
+    return Object.entries(data).reduce((prev, [key, value]) => {
+      return Object.assign(prev, { [key]: this.getField(key).transform(value) });
+    }, {});
   }
 
-  validate() {
-    this.fields.forEach(field => field.validate());
+  validate(data) {
+    return Object.entries(data).reduce((prev, [key, value]) => {
+      return Object.assign(prev, { [key]: this.getField(key).validate(value) });
+    }, {});
   }
 }

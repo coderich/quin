@@ -1,48 +1,40 @@
-import { get } from 'lodash';
-import { isEmail } from 'validator';
+import isEmail from 'validator/lib/isEmail';
 import * as Errors from './error.service';
-import { hashObject } from './app.service';
 
-export const allow = (...args) => (val, oldData, op, path) => {
+export const allow = (...args) => (val, cmp = v => args.indexOf(v) === -1) => {
   if (val == null) return;
-  if (args.indexOf(val) === -1) throw new Errors.AllowRuleError(`${path} must contain: { ${args.join(' ')} }, found '${val}'`);
+  if (cmp(val)) throw new Errors.AllowRuleError();
 };
 
-export const deny = (...args) => (val, oldData, op, path) => {
+export const deny = (...args) => (val, cmp = v => args.indexOf(v) > -1) => {
   if (val == null) return;
-  if (args.indexOf(val) > -1) throw new Errors.RejectRuleError(`${path} must not contain: { ${args.join(' ')} }, found '${val}'`);
+  if (cmp(val)) throw new Errors.DenyRuleError();
 };
 
 export const range = (min, max) => {
   if (min == null) min = undefined;
   if (max == null) max = undefined;
 
-  return (val) => {
+  return (val, cmp = v => Number.isNaN(v) || v < min || v > max) => {
     if (val == null) return;
-    const num = Number(val);
-    if (Number.isNaN(num)) throw new Errors.RangeRuleError(`${val} is not a valid number`);
-    if (num < min) throw new Errors.RangeRuleError(`${val} cannot be less than ${min}`);
-    if (num > max) throw new Errors.RangeRuleError(`${val} cannot be greater than ${max}`);
+    if (cmp(Number(val))) throw new Errors.RangeRuleError();
   };
 };
 
-export const email = () => (val, oldData, op, path) => {
+export const email = () => (val, cmp = v => !isEmail(v)) => {
   if (val == null) return;
-  if (!isEmail(val)) throw new Errors.EmailRuleError(`${path} is not a valid email`);
+  if (cmp(val)) throw new Errors.EmailRuleError();
 };
 
-export const required = () => (val, oldData, op, path) => {
-  if (op === 'create' && val == null) throw new Errors.RequiredRuleError(`${path} is a required field`);
-  if (op === 'update' && val === null) throw new Errors.RequiredRuleError(`${path} cannot be set to null`);
+export const required = () => (val, cmp = v => v == null) => {
+  if (cmp(val)) throw new Errors.RequiredRuleError();
 };
 
-export const selfless = () => (val, oldData, op, path) => {
+export const selfless = () => (val, cmp = v => false) => {
   if (val == null) return;
-  if (`${val}` === `${get(oldData, 'id')}`) throw new Errors.SelflessRuleError(`${path} cannot hold a reference to itself`);
+  if (cmp(val)) throw new Errors.SelflessRuleError();
 };
 
-export const immutable = () => (val, oldData, op, path) => {
-  const p = path.substr(path.indexOf('.') + 1);
-  const oldVal = get(oldData, p);
-  if (op === 'update' && val !== undefined && `${hashObject(val)}` !== `${hashObject(oldVal)}`) throw new Errors.ImmutableRuleError(`${path} is immutable; cannot be changed once set`);
+export const immutable = () => (val, cmp = v => false) => {
+  if (cmp(val)) throw new Errors.ImmutableRuleError();
 };

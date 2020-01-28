@@ -10,12 +10,14 @@ class QuinDirective extends SchemaDirectiveVisitor {
 export default {
   typeDefs: `
     scalar QuinMixed
+
     enum QuinIndexEnum { unique }
+    input QuinIndexInput { name: String type: QuinIndexEnum! on: [String!]! }
+
     enum QuinValidEnum { email }
     enum QuinRestrictEnum { self change dupes }
     enum QuinTransformEnum { lowerCase upperCase titleCase createdAt updatedAt }
     enum QuinOnDeleteEnum { cascade nullify restrict }
-    input QuinIndexInput { name: String type: QuinIndexEnum! on: [String!]! }
 
     directive @quin(
       alias: String

@@ -1,5 +1,5 @@
 {
-  "name": "@coderich/linchpin",
+  "name": "@coderich/quin",
   "author": "Richard Livolsi (coderich)",
   "version": "0.0.1",
   "description": "A GraphQL Schema to represent your data",
@@ -13,8 +13,6 @@
   "dependencies": {
     "graphql": "^14.6.0",
     "graphql-tools": "^4.0.6",
-    "lodash": "^4.17.15",
-    "object-hash": "^2.0.1",
     "validator": "^12.2.0"
   },
   "devDependencies": {
@@ -22,10 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coderich/linchpin.git"
+    "url": "git+https://github.com/coderich/quin.git"
   },
   "bugs": {
-    "url": "https://github.com/coderich/linchpin/issues"
+    "url": "https://github.com/coderich/quin/issues"
   },
-  "homepage": "https://github.com/coderich/linchpin#readme"
+  "homepage": "https://github.com/coderich/quin#readme"
 }

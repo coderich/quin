@@ -90,11 +90,11 @@ export default class Field extends Type {
     return Boolean(this.getDirectiveArg('quin', 'embedded'));
   }
 
-  transform() {
+  transform(value) {
     return this;
   }
 
-  validate() {
+  validate(value) {
     return this;
   }
 }
