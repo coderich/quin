@@ -14,26 +14,25 @@ export default {
     enum QuinIndexEnum { unique }
     input QuinIndexInput { name: String type: QuinIndexEnum! on: [String!]! }
 
-    enum QuinValidEnum { email }
-    enum QuinRestrictEnum { self change dupes }
-    enum QuinTransformEnum { lowerCase upperCase titleCase createdAt updatedAt }
+    enum QuinEnforceEnum { email selfless immutable distinct }
+    enum QuinTransformEnum { dedupe lowerCase upperCase titleCase createdAt updatedAt }
     enum QuinOnDeleteEnum { cascade nullify restrict }
 
     directive @quin(
-      alias: String
       allow: [QuinMixed!]
       deny: [QuinMixed!]
-      restrict: [QuinRestrictEnum!]
+      norepeat: [QuinMixed!]
       range: [Int!]
-      distinct: [QuinMixed!]
-      valid: [QuinValidEnum!]
+      enforce: [QuinEnforceEnum!]
       transform: [QuinTransformEnum!]
+
+      alias: String
       materializeBy: String
       embedded: Boolean
       hidden: Boolean
-      driver: String
       onDelete: QuinOnDeleteEnum
       indexes: [QuinIndexInput]
+      driver: String
     ) on OBJECT | FIELD_DEFINITION
   `,
 

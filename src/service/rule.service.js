@@ -1,14 +1,25 @@
 import isEmail from 'validator/lib/isEmail';
-import * as Errors from './error.service';
+
+// Rule Errors
+class RuleError extends Error {}
+export const AllowRuleError = class extends RuleError {};
+export const DenyRuleError = class extends RuleError {};
+export const RangeRuleError = class extends RuleError {};
+export const EmailRuleError = class extends RuleError {};
+export const RequiredRuleError = class extends RuleError {};
+export const SelflessRuleError = class extends RuleError {};
+export const ImmutableRuleError = class extends RuleError {};
+export const NoRepeatRuleError = class extends RuleError {};
+export const DistinctRuleError = class extends RuleError {};
 
 export const allow = (...args) => (val, cmp = v => args.indexOf(v) === -1) => {
   if (val == null) return;
-  if (cmp(val)) throw new Errors.AllowRuleError();
+  if (cmp(val)) throw new AllowRuleError();
 };
 
 export const deny = (...args) => (val, cmp = v => args.indexOf(v) > -1) => {
   if (val == null) return;
-  if (cmp(val)) throw new Errors.DenyRuleError();
+  if (cmp(val)) throw new DenyRuleError();
 };
 
 export const range = (min, max) => {
@@ -17,24 +28,32 @@ export const range = (min, max) => {
 
   return (val, cmp = v => Number.isNaN(v) || v < min || v > max) => {
     if (val == null) return;
-    if (cmp(Number(val))) throw new Errors.RangeRuleError();
+    if (cmp(Number(val))) throw new RangeRuleError();
   };
 };
 
 export const email = () => (val, cmp = v => !isEmail(v)) => {
   if (val == null) return;
-  if (cmp(val)) throw new Errors.EmailRuleError();
+  if (cmp(val)) throw new EmailRuleError();
 };
 
-export const required = () => (val, cmp = v => v == null) => {
-  if (cmp(val)) throw new Errors.RequiredRuleError();
+export const required = strict => (val, cmp = v => (strict ? v == null : v === null)) => {
+  if (cmp(val)) throw new RequiredRuleError();
 };
 
 export const selfless = () => (val, cmp = v => false) => {
   if (val == null) return;
-  if (cmp(val)) throw new Errors.SelflessRuleError();
+  if (cmp(val)) throw new SelflessRuleError();
 };
 
 export const immutable = () => (val, cmp = v => false) => {
-  if (cmp(val)) throw new Errors.ImmutableRuleError();
+  if (cmp(val)) throw new ImmutableRuleError();
+};
+
+export const norepeat = () => (val, cmp = v => false) => {
+  if (cmp(val)) throw new NoRepeatRuleError();
+};
+
+export const distinct = () => (val, cmp = v => false) => {
+  if (cmp(val)) throw new DistinctRuleError();
 };

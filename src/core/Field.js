@@ -1,17 +1,43 @@
 import Type from './Type';
 import { isScalarDataType } from '../service/app.service';
+import * as TransformService from '../service/transform.service';
+import * as RuleService from '../service/rule.service';
 
 export default class Field extends Type {
   constructor(schema, field) {
     super(field);
     this.schema = schema;
-    this.toString = () => `${this.getName()}`;
+    this.transforms = [];
+    this.rules = [];
+
+    // Populate transform and rule thunks
+    Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
+      if (!Array.isArray(value)) value = [value];
+
+      switch (key) {
+        case 'allow': case 'deny': case 'norepeat': case 'range': {
+          this.rules.push(RuleService[key](...value));
+          break;
+        }
+        case 'enforce': {
+          this.rules.push(...value.map(r => RuleService[r]()));
+          break;
+        }
+        case 'transform': {
+          this.transforms.push(...value.map(t => TransformService[t]()));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
   }
 
   getDataType() {
     const type = this.getType();
     if (!this.isArray()) return type;
-    const isSet = this.getDirectiveArg('quin', 'restrict', '').indexOf('dupes') > -1;
+    const isSet = this.getDirectiveArg('quin', 'enforce', '').indexOf('distinct') > -1;
     return Object.assign([type], { isSet });
   }
 
@@ -63,7 +89,7 @@ export default class Field extends Type {
   }
 
   getOnDelete() {
-    return Boolean(this.getDirectiveArg('quin', 'onDelete'));
+    return this.getDirectiveArg('quin', 'onDelete');
   }
 
   isCreateField() {
@@ -83,18 +109,23 @@ export default class Field extends Type {
   }
 
   isImmutable() {
-    return this.getDirectiveArg('quin', 'restrict', '').indexOf('change') > -1;
+    return this.getDirectiveArg('quin', 'enforce', '').indexOf('immutable') > -1;
   }
 
   isEmbedded() {
     return Boolean(this.getDirectiveArg('quin', 'embedded'));
   }
 
-  transform(value) {
-    return this;
+  transform(value, mapper) {
+    if (mapper == null) mapper = {};
+
+    return this.transforms.reduce((prev, t) => {
+      return t(prev);
+    }, value);
   }
 
-  validate(value) {
-    return this;
+  validate(value, mapper) {
+    if (mapper == null) mapper = {};
+    return Promise.all(this.rules.map(r => r(value)));
   }
 }

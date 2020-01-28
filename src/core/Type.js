@@ -26,6 +26,12 @@ export default class Type {
     return directive.getArg(arg) || defaultValue;
   }
 
+  getDirectiveArgs(name, defaultValue) {
+    const directive = this.getDirective(name);
+    if (!directive) return defaultValue;
+    return directive.getArgs();
+  }
+
   getAlias(defaultValue) {
     return this.getDirectiveArg('quin', 'alias', defaultValue || this.getName());
   }
@@ -40,5 +46,9 @@ export default class Type {
 
   isRequired() {
     return isNonNullType(this.ast.type);
+  }
+
+  toString() {
+    return `${this.getName()}`;
   }
 }

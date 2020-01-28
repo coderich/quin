@@ -39,6 +39,7 @@ describe('Schema', () => {
     expect(Person.getDriver()).toBe('default');
     expect(Person.isHidden()).toBe(false);
     expect(Person.isVisible()).toBe(true);
+    expect(Person.referentialIntegrity().length).toBe(8);
   });
 
   test('bookModel', () => {

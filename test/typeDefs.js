@@ -5,7 +5,7 @@ export default `
     id: ID!
     name: String! @quin(transform: titleCase)
     authored: [Book] @quin(materializeBy: "author")
-    emailAddress: String! @quin(valid: email)
+    emailAddress: String! @quin(enforce: email)
     friends: [Person] @quin(onDelete: cascade)
     status: String
   }
@@ -16,7 +16,7 @@ export default `
     id: ID!
     name: String! @quin(transform: titleCase, deny: "The Bible")
     price: Float! @quin(range: [0, 100])
-    author: Person! @quin(restrict: change, onDelete: cascade)
+    author: Person! @quin(enforce: immutable, onDelete: cascade)
     bestSeller: Boolean
     bids: [Int]
     chapters: [Chapter] @quin(materializeBy: "book")
@@ -69,14 +69,14 @@ export default `
     id: ID!
     year: Int
     type: String! @quin(allow: ["home", "office", "business"])
-    tenants: [Person] @quin(restrict: dupes, onDelete: cascade)
+    tenants: [Person] @quin(enforce: distinct, onDelete: cascade)
     landlord: Person @quin(onDelete: nullify)
   }
 
   type Color {
     id: ID!
     type: String! @quin(allow: ["blue", "red", "green", "purple"])
-    isDefault: Boolean @quin(alias: "is_default" distinct: true)
+    isDefault: Boolean @quin(alias: "is_default" norepeat: true)
   }
 
   type Art {

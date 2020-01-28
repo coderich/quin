@@ -1,12 +1,12 @@
 import Type from './Type';
 import Field from './Field';
+import { required } from '../service/rule.service';
 
 export default class Model extends Type {
   constructor(schema, model) {
     super(model);
     this.schema = schema;
     this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
-    this.toString = () => `${this.getName()}`;
   }
 
   getFields() {
@@ -77,18 +77,37 @@ export default class Model extends Type {
 
   referentialIntegrity(refs) {
     if (refs) this.referentials = refs;
+    // console.log(this.referentials.map(ref => `${ref.model}:${ref.field}:${ref.isArray}:${ref.op}`));
     return this.referentials;
   }
 
-  transform(data) {
+  transform(data, mapper) {
+    if (data == null) data = {};
+    if (mapper == null) mapper = {};
+
     return Object.entries(data).reduce((prev, [key, value]) => {
-      return Object.assign(prev, { [key]: this.getField(key).transform(value) });
+      return Object.assign(prev, { [key]: this.getField(key).transform(value, mapper) });
     }, {});
   }
 
-  validate(data) {
-    return Object.entries(data).reduce((prev, [key, value]) => {
-      return Object.assign(prev, { [key]: this.getField(key).validate(value) });
+  validate(data, mapper) {
+    if (data == null) data = {};
+    if (mapper == null) mapper = {};
+
+    // Validate does an explicit transform first
+    const newData = this.transform(data, mapper);
+
+    // Required
+    const { required: thunk = required() } = mapper;
+
+    this.getFields().filter(field => field.isRequired()).forEach((field) => {
+      const fieldName = field.getName();
+      thunk(newData[fieldName]);
+    });
+
+    // Rules
+    return Object.entries(newData).reduce((prev, [key, value]) => {
+      return Object.assign(prev, { [key]: this.getField(key).validate(value, mapper) });
     }, {});
   }
 }
