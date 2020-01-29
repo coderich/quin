@@ -39,7 +39,7 @@ export default class Field extends Type {
   getDataType() {
     const type = this.getType();
     if (!this.isArray()) return type;
-    const isSet = this.getDirectiveArg('quin', 'enforce', '').indexOf('distinct') > -1;
+    const isSet = this.getDirectiveArg('quin', 'transform', '').indexOf('dedupe') > -1;
     return Object.assign([type], { isSet });
   }
 

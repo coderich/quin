@@ -6,7 +6,7 @@ export default `
     name: String! @quin(transform: titleCase)
     authored: [Book] @quin(materializeBy: "author")
     emailAddress: String! @quin(enforce: email)
-    friends: [Person] @quin(onDelete: cascade)
+    friends: [Person] @quin(transform: dedupe, enforce: [selfless], onDelete: cascade)
     status: String
   }
 
@@ -72,7 +72,7 @@ export default `
     id: ID!
     year: Int
     type: String! @quin(allow: ["home", "office", "business"])
-    tenants: [Person] @quin(enforce: distinct, onDelete: cascade)
+    tenants: [Person] @quin(transform: dedupe, onDelete: cascade)
     landlord: Person @quin(onDelete: nullify)
   }
 
