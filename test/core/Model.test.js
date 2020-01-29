@@ -3,7 +3,7 @@ import Schema from '../../src/core/Schema';
 import * as RuleService from '../../src/service/rule.service';
 
 const schema = new Schema(typeDefs);
-const { Person, Book, Chapter, Building, Library, Apartment, Color } = schema.getModelMap();
+const { Person, Book, Art } = schema.getModelMap();
 
 describe('Model', () => {
   test('Transform', () => {
@@ -27,5 +27,10 @@ describe('Model', () => {
     expect(() => Book.validate({ price: '150.55' }, { required })).toThrow(RuleService.RangeRuleError);
     expect(() => Book.validate({ price: '50.55' }, { required })).not.toThrow();
     expect(() => Book.validate(null, { required })).not.toThrow();
+
+    expect(() => Art.validate({ name: 'art', comments: 'yes' })).not.toThrow();
+    expect(() => Art.validate({ name: 'art', comments: ['yes'] })).not.toThrow();
+    expect(() => Art.validate({ name: 'art', comments: ['yes', 'maybe'] })).not.toThrow();
+    expect(() => Art.validate({ name: 'art', comments: ['yes', 'maybe', 'perhaps'] })).toThrow();
   });
 });

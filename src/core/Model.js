@@ -1,6 +1,5 @@
 import Type from './Type';
 import Field from './Field';
-import { required } from '../service/rule.service';
 
 export default class Model extends Type {
   constructor(schema, model) {

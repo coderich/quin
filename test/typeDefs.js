@@ -86,5 +86,6 @@ export default `
     id: ID!
     name: String! @quin(transform: titleCase)
     bids: [Float]
+    comments: [String] @quin(allow: ["yes", "no", "maybe"])
   }
 `;
