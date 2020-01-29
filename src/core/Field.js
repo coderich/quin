@@ -11,6 +11,8 @@ export default class Field extends Type {
     this.rules = [];
 
     // Populate transform and rule thunks
+    if (this.isRequired()) this.rules.push(RuleService.required());
+
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
       if (!Array.isArray(value)) value = [value];
 
@@ -88,12 +90,12 @@ export default class Field extends Type {
     return this.getVirtualModel().getField(this.getVirtualRef());
   }
 
-  getRules() {
-    return this.rules;
-  }
-
   getTransforms() {
     return this.transforms;
+  }
+
+  getRules() {
+    return this.rules;
   }
 
   getOnDelete() {

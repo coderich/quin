@@ -127,6 +127,7 @@ describe('Schema', () => {
     expect(Apartment.getField('building').isEmbedded()).toBe(true);
     expect(isDefault.getAlias()).toBe('is_default');
     expect(Building.isHidden()).toBe(true);
+    expect(Building.isVisible()).toBe(false);
     expect(Page.getIndexes()).toEqual([
       { name: 'uix_page', type: 'unique', on: ['number', 'chapter'] },
       { name: 'uix_page_verbage', type: 'unique', on: ['verbage'] },

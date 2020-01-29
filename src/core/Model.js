@@ -99,17 +99,9 @@ export default class Model extends Type {
     // Validate does an explicit transform first
     const newData = this.transform(data, mapper);
 
-    // Required
-    const thunk = required();
-
-    this.getFields().filter(field => field.getType() !== 'ID' && field.isRequired()).forEach((field) => {
-      const fieldName = field.getName();
-      thunk(newData[fieldName], mapper.required);
+    // Enforce the rules
+    this.getFields().filter(field => field.getType() !== 'ID').forEach((field) => {
+      field.validate(newData[field.getName()], mapper);
     });
-
-    // Rules
-    return Object.entries(newData).reduce((prev, [key, value]) => {
-      return Object.assign(prev, { [key]: this.getField(key).validate(value, mapper) });
-    }, {});
   }
 }
