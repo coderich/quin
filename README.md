@@ -1,2 +1,4 @@
 # Quin
-### The quintessential directive for your GraphQL schema.
+### A Quintessential Directive For GraphQL Schemas.
+
+**Quin** is a library.
