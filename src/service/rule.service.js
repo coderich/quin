@@ -1,5 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
-import { makeThunk } from './app.service';
+import { makeThunk, ucFirst } from './app.service';
 
 // Rule Errors
 const Errors = {};
@@ -13,11 +13,21 @@ Errors.SelflessRuleError = class extends RuleError {};
 Errors.ImmutableRuleError = class extends RuleError {};
 Errors.NoRepeatRuleError = class extends RuleError {};
 Errors.DistinctRuleError = class extends RuleError {};
+Errors.EndsWithRuleError = class extends RuleError {};
+Errors.IncludesRuleError = class extends RuleError {};
+Errors.MatchRuleError = class extends RuleError {};
+Errors.SearchRuleError = class extends RuleError {};
+Errors.StartsWithRuleError = class extends RuleError {};
 
 // Start with JS built-in String methods
-const rules = [
-  // 'endsWith', 'includes', 'match', 'search', 'startsWith',
-].reduce((prev, name) => Object.assign(prev, { [name]: (...args) => makeThunk(name, v => String(v)[name](...args)) }), {});
+const rules = ['endsWith', 'includes', 'match', 'search', 'startsWith'].reduce((prev, name) => {
+  return Object.assign(prev, {
+    [name]: (...args) => makeThunk(name, (val, cmp = v => String(v)[name](...args)) => {
+      if (val === null) return;
+      if (!cmp(val)) throw new Errors[`${ucFirst(name)}RuleError`]();
+    }),
+  });
+}, {});
 
 rules.allow = (...args) => makeThunk('allow', (val, cmp = v => args.indexOf(v) === -1) => {
   if (val == null) return;
@@ -39,13 +49,15 @@ rules.range = (min, max) => {
   });
 };
 
+rules.norepeat = (...args) => makeThunk('norepeat', (val, cmp = v => false) => {
+  if (cmp(val)) throw new Errors.NoRepeatRuleError();
+});
+
+
+// Enforcable
 rules.email = () => makeThunk('email', (val, cmp = v => !isEmail(v)) => {
   if (val == null) return;
   if (cmp(val)) throw new Errors.EmailRuleError();
-});
-
-rules.required = () => makeThunk('required', (val, cmp = v => v == null) => {
-  if (cmp(val)) throw new Errors.RequiredRuleError();
 });
 
 rules.selfless = () => makeThunk('selfless', (val, cmp = v => false) => {
@@ -57,13 +69,16 @@ rules.immutable = () => makeThunk('immutable', (val, cmp = v => false) => {
   if (cmp(val)) throw new Errors.ImmutableRuleError();
 });
 
-rules.norepeat = () => makeThunk('norepeat', (val, cmp = v => false) => {
-  if (cmp(val)) throw new Errors.NoRepeatRuleError();
-});
-
 rules.distinct = () => makeThunk('distinct', (val, cmp = v => false) => {
   if (cmp(val)) throw new Errors.DistinctRuleError();
 });
+
+
+// Used internally
+rules.required = () => makeThunk('required', (val, cmp = v => v == null) => {
+  if (cmp(val)) throw new Errors.RequiredRuleError();
+});
+
 
 export { Errors };
 export default rules;

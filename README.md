@@ -1,30 +1,52 @@
 # Quin
+
 ### Enrich your GraphQL schema.
 
-**Quin** is a [GraphQL Directive](https://www.apollographql.com/docs/graphql-tools/schema-directives/) to easily add field *transformations*, *validation*, and *meta data* to any GraphQL schema.
+**Quin** is a [GraphQL Directive](https://www.apollographql.com/docs/graphql-tools/schema-directives/) to easily add field *transformations*, *validation*, and *meta data* to a GraphQL schema.
 
 Features include:
 * Field *transformations* and *validation*
 * Schema *meta-data*
 * Extensibility
 
-##### At a glance:
+#### Quickview:
+
 ```gql
 Type User {
   id: ID!
-  name: String! @quin(transform: [trim, titleCase])
-  emailAddress: String! @quin(enforce: email)
+  name: String! @quin(transform: [trim, toTitleCase])
+  emailAddress: String! @quin(enforce: email, transform: toLowerCase)
 }
 ```
 
-| key | value | example
-| - | - | - |
-| *allow* | Array of values to allow | `@quin(allow: ["red", "green", "blue"])`
-| *deny* | Array of values to deny | `@quin(deny: [0, false, "false"])`
-| *range* | Numerical range [*min*, *max*] | `@quin(range: [0, 100])`
-| *norepeat* | Array of values to never repeat | `@quin(norepeat: [""])`
-| *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])`
-| *transform* | Array of `Transforms` to apply | `@quin(transform: titlecase)`
+## The Quin Directive
+
+The `@quin` directive provides a variety of *key-value* pairs that can be used on various parts of your schema.
+
+| key | value | example | on
+| - | - | - | -|
+| *allow* | Array of values to allow | `@quin(allow: ["red", "green", "blue"])` | `Fields`
+| *deny* | Array of values to deny | `@quin(deny: [0, false, "false"])` | `Fields`
+| *range* | Numerical range [*min*, *max*] | `@quin(range: [0, 100])` | `Fields`
+| *norepeat* | Array of values to never repeat | `@quin(norepeat: ["special1", "special2"])` | `Fields`
+| *transform* | Array of `Transforms` to apply | `@quin(transform: [trim, toTitleCase])`| `Fields `
+| *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])` | `Fields`
+
+
+#### Transforms
+
+> You may additionally use any [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) method as a *value* for the `transform` key (eg. `toLowerCase`):
+
+| value | description
+| - | - |
+| *toTitleCase* | Transform value to titleCase
+| *toLocaleTitleCase* | Transform value to locale titleCase
+| *toSentenceCase* | Transform value to sentenceCase
+| *toLocaleSentenceCase* | Transform value to locale sentenceCase
+| *dedupe* | Remove any duplicates found in array
+| *timestamp* | Transform value to Date.now()
+
+#### Rules
 
 | key | value | example
 | - | - | - |

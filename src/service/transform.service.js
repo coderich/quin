@@ -22,12 +22,12 @@ const castCmp = (type, value) => {
 
 // Start with JS built-in String methods
 const transforms = [
-  'charAt', 'charCodeAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
-  'repeat', 'replace', 'search', 'slice', 'split', 'substr', 'substring',
-  'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim',
+  'charAt', 'charCodeAt', 'codePointAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
+  'normalize', 'padEnd', 'padStart', 'repeat', 'replace', 'search', 'slice', 'split', 'substr', 'substring',
+  'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim', 'trimEnd', 'trimStart', 'raw',
 ].reduce((prev, name) => Object.assign(prev, { [name]: (...args) => makeThunk(name, v => String(v)[name](...args)) }), {});
 
-// Custom transformations
+// Custom transforms
 transforms.toTitleCase = () => makeThunk('toTitleCase', v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()));
 transforms.toLocaleTitleCase = () => makeThunk('toLocaleTitleCase', v => v.replace(/\w\S*/g, w => w.charAt(0).toLocaleUpperCase() + w.slice(1).toLocaleLowerCase()));
 transforms.toSentenceCase = () => makeThunk('toSentenceCase', v => v.charAt(0).toUpperCase() + v.slice(1));
