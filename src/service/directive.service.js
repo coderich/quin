@@ -15,7 +15,7 @@ export default {
     input QuinIndexInput { name: String type: QuinIndexEnum! on: [String!]! }
 
     enum QuinEnforceEnum { email selfless immutable distinct }
-    enum QuinTransformEnum { dedupe lowerCase upperCase titleCase createdAt updatedAt }
+    enum QuinTransformEnum { dedupe toLowerCase toUpperCase toTitleCase createdAt updatedAt }
     enum QuinOnDeleteEnum { cascade nullify restrict }
 
     directive @quin(

@@ -1,4 +1,4 @@
-import * as RuleService from '../../src/service/rule.service';
+import RuleService, { Errors } from '../../src/service/rule.service';
 
 describe('TransformService', () => {
   test('Allow', () => {
@@ -6,8 +6,8 @@ describe('TransformService', () => {
     expect(() => thunk('blue')).not.toThrow();
     expect(() => thunk('red')).not.toThrow();
     expect(() => thunk('green')).not.toThrow();
-    expect(() => thunk('yellow')).toThrow(RuleService.AllowRuleError);
-    expect(() => thunk('greenish')).toThrow(RuleService.AllowRuleError);
+    expect(() => thunk('yellow')).toThrow(Errors.AllowRuleError);
+    expect(() => thunk('greenish')).toThrow(Errors.AllowRuleError);
     expect(() => thunk('greenish', v => false)).not.toThrow();
   });
 
@@ -17,8 +17,8 @@ describe('TransformService', () => {
     expect(() => thunk('red')).not.toThrow();
     expect(() => thunk('green')).not.toThrow();
     expect(() => thunk('purple.')).not.toThrow();
-    expect(() => thunk('purple')).toThrow(RuleService.DenyRuleError);
-    expect(() => thunk('poison')).toThrow(RuleService.DenyRuleError);
+    expect(() => thunk('purple')).toThrow(Errors.DenyRuleError);
+    expect(() => thunk('poison')).toThrow(Errors.DenyRuleError);
     expect(() => thunk('poison', v => false)).not.toThrow();
   });
 
@@ -29,8 +29,8 @@ describe('TransformService', () => {
     expect(() => pct(22.33)).not.toThrow();
     expect(() => pct(100)).not.toThrow();
     expect(() => pct(100.000)).not.toThrow();
-    expect(() => pct(-1)).toThrow(RuleService.RangeError);
-    expect(() => pct(100.0001)).toThrow(RuleService.RangeError);
+    expect(() => pct(-1)).toThrow(Errors.RangeError);
+    expect(() => pct(100.0001)).toThrow(Errors.RangeError);
     expect(() => pct(100.0001, v => false)).not.toThrow();
 
     const floor = RuleService.range(0);
@@ -39,8 +39,8 @@ describe('TransformService', () => {
     expect(() => floor(22.33)).not.toThrow();
     expect(() => floor(100)).not.toThrow();
     expect(() => floor(10000)).not.toThrow();
-    expect(() => floor(-1)).toThrow(RuleService.RangeError);
-    expect(() => floor(-100)).toThrow(RuleService.RangeError);
+    expect(() => floor(-1)).toThrow(Errors.RangeError);
+    expect(() => floor(-100)).toThrow(Errors.RangeError);
     expect(() => floor(-100, v => false)).not.toThrow();
 
     const ceil = RuleService.range(null, 100);
@@ -50,7 +50,7 @@ describe('TransformService', () => {
     expect(() => ceil(100)).not.toThrow();
     expect(() => ceil(-1)).not.toThrow();
     expect(() => ceil(-1000)).not.toThrow();
-    expect(() => ceil(100.01)).toThrow(RuleService.RangeError);
+    expect(() => ceil(100.01)).toThrow(Errors.RangeError);
     expect(() => ceil(100.01, v => false)).not.toThrow();
   });
 
@@ -60,9 +60,9 @@ describe('TransformService', () => {
     expect(() => thunk('you@mail.com')).not.toThrow();
     expect(() => thunk('them@mail.com')).not.toThrow();
     expect(() => thunk('me.you.them@email.com')).not.toThrow();
-    expect(() => thunk('me.you.email.com')).toThrow(RuleService.EmailRuleError);
-    expect(() => thunk('me@')).toThrow(RuleService.EmailRuleError);
-    expect(() => thunk('me@.com')).toThrow(RuleService.EmailRuleError);
+    expect(() => thunk('me.you.email.com')).toThrow(Errors.EmailRuleError);
+    expect(() => thunk('me@')).toThrow(Errors.EmailRuleError);
+    expect(() => thunk('me@.com')).toThrow(Errors.EmailRuleError);
     expect(() => thunk('me@.com', v => false)).not.toThrow();
   });
 

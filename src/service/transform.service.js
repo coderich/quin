@@ -1,32 +1,39 @@
-export const lowerCase = () => Object.defineProperty((val, fn = v => v.toLowerCase()) => fn(val), 'name', { value: 'lowerCase' });
-export const upperCase = () => Object.defineProperty((val, fn = v => v.toUpperCase()) => fn(val), 'name', { value: 'upperCase' });
-export const titleCase = () => Object.defineProperty((val, fn = v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())) => fn(val), 'name', { value: 'titleCase' });
-export const sentenceCase = () => Object.defineProperty((val, fn = v => v.charAt(0).toUpperCase() + v.slice(1)) => fn(val), 'name', { value: 'sentenceCase' });
-export const dedupe = () => Object.defineProperty((val, fn = v => [...new Set(v)]) => fn(val), 'name', { value: 'dedupe' });
+import { makeThunk } from './app.service';
 
+// Cast compare function
 const castCmp = (type, value) => {
   switch (type) {
     case 'String': {
-      value = `${value}`;
-      break;
+      return `${value}`;
     }
     case 'Number': case 'Float': case 'Int': {
-      const num = Number(value);
-      if (!Number.isNaN(num)) value = num;
-      break;
+      return Number(value);
     }
     case 'Boolean': {
-      if (value === 'true') value = true;
-      if (value === 'false') value = false;
-      break;
+      if (value === 'true') return true;
+      if (value === 'false') return false;
+      return Boolean(value);
     }
     default: {
-      break;
+      return value;
     }
   }
-
-  return value;
 };
-export const cast = type => Object.defineProperty((val, fn = v => castCmp(type, v)) => fn(val), 'name', { value: 'cast' });
-// export const createdAt = val => val.charAt(0).toUpperCase() + val.slice(1);
-// export const updatedAt = val => val.charAt(0).toUpperCase() + val.slice(1);
+
+// Start with JS built-in String methods
+const transforms = [
+  'charAt', 'charCodeAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
+  'repeat', 'replace', 'search', 'slice', 'split', 'substr', 'substring',
+  'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim',
+].reduce((prev, name) => Object.assign(prev, { [name]: (...args) => makeThunk(name, v => String(v)[name](...args)) }), {});
+
+// Custom transformations
+transforms.toTitleCase = () => makeThunk('toTitleCase', v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()));
+transforms.toLocaleTitleCase = () => makeThunk('toLocaleTitleCase', v => v.replace(/\w\S*/g, w => w.charAt(0).toLocaleUpperCase() + w.slice(1).toLocaleLowerCase()));
+transforms.toSentenceCase = () => makeThunk('toSentenceCase', v => v.charAt(0).toUpperCase() + v.slice(1));
+transforms.toLocaleSentenceCase = () => makeThunk('toLocaleSentenceCase', v => v.charAt(0).toLocaleUpperCase() + v.slice(1));
+transforms.dedupe = () => makeThunk('dedupe', v => [...new Set(v)]);
+transforms.timestamp = () => makeThunk('timestamp', v => Date.now());
+transforms.cast = type => makeThunk('cast', v => castCmp(type, v)); // used internally
+
+export default transforms;

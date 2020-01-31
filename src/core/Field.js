@@ -1,14 +1,15 @@
 import Type from './Type';
 import { isScalarDataType } from '../service/app.service';
-import * as TransformService from '../service/transform.service';
-import * as RuleService from '../service/rule.service';
+import TransformService from '../service/transform.service';
+import RuleService from '../service/rule.service';
 
 export default class Field extends Type {
   constructor(schema, field) {
     super(field);
     this.schema = schema;
-    this.transforms = [TransformService.cast(this.getType())];
+    this.transforms = [];
     this.rules = [];
+    this.cast = TransformService.cast(this.getType());
 
     // Populate transform and rule thunks
     if (this.isRequired()) this.rules.push(RuleService.required());
@@ -129,7 +130,7 @@ export default class Field extends Type {
   transform(value, mapper) {
     if (mapper == null) mapper = {};
 
-    return this.transforms.reduce((prev, transform) => {
+    return this.transforms.concat(this.cast).reduce((prev, transform) => {
       const cmp = mapper[transform.name];
       if (Array.isArray(prev)) return prev.map(p => transform(p, cmp));
       return transform(prev, cmp);

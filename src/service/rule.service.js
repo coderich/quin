@@ -1,59 +1,69 @@
 import isEmail from 'validator/lib/isEmail';
+import { makeThunk } from './app.service';
 
 // Rule Errors
+const Errors = {};
 class RuleError extends Error {}
-export const AllowRuleError = class extends RuleError {};
-export const DenyRuleError = class extends RuleError {};
-export const RangeRuleError = class extends RuleError {};
-export const EmailRuleError = class extends RuleError {};
-export const RequiredRuleError = class extends RuleError {};
-export const SelflessRuleError = class extends RuleError {};
-export const ImmutableRuleError = class extends RuleError {};
-export const NoRepeatRuleError = class extends RuleError {};
-export const DistinctRuleError = class extends RuleError {};
+Errors.AllowRuleError = class extends RuleError {};
+Errors.DenyRuleError = class extends RuleError {};
+Errors.RangeRuleError = class extends RuleError {};
+Errors.EmailRuleError = class extends RuleError {};
+Errors.RequiredRuleError = class extends RuleError {};
+Errors.SelflessRuleError = class extends RuleError {};
+Errors.ImmutableRuleError = class extends RuleError {};
+Errors.NoRepeatRuleError = class extends RuleError {};
+Errors.DistinctRuleError = class extends RuleError {};
 
-export const allow = (...args) => Object.defineProperty((val, cmp = v => args.indexOf(v) === -1) => {
+// Start with JS built-in String methods
+const rules = [
+  // 'endsWith', 'includes', 'match', 'search', 'startsWith',
+].reduce((prev, name) => Object.assign(prev, { [name]: (...args) => makeThunk(name, v => String(v)[name](...args)) }), {});
+
+rules.allow = (...args) => makeThunk('allow', (val, cmp = v => args.indexOf(v) === -1) => {
   if (val == null) return;
-  if (cmp(val)) throw new AllowRuleError();
-}, 'name', { value: 'allow' });
+  if (cmp(val)) throw new Errors.AllowRuleError();
+});
 
-export const deny = (...args) => Object.defineProperty((val, cmp = v => args.indexOf(v) > -1) => {
+rules.deny = (...args) => makeThunk('deny', (val, cmp = v => args.indexOf(v) > -1) => {
   if (val == null) return;
-  if (cmp(val)) throw new DenyRuleError();
-}, 'name', { value: 'deny' });
+  if (cmp(val)) throw new Errors.DenyRuleError();
+});
 
-export const range = (min, max) => {
+rules.range = (min, max) => {
   if (min == null) min = undefined;
   if (max == null) max = undefined;
 
-  return Object.defineProperty((val, cmp = v => Number.isNaN(v) || v < min || v > max) => {
+  return makeThunk('range', (val, cmp = v => Number.isNaN(v) || v < min || v > max) => {
     if (val == null) return;
-    if (cmp(Number(val))) throw new RangeRuleError();
-  }, 'name', { value: 'range' });
+    if (cmp(Number(val))) throw new Errors.RangeRuleError();
+  });
 };
 
-export const email = () => Object.defineProperty((val, cmp = v => !isEmail(v)) => {
+rules.email = () => makeThunk('email', (val, cmp = v => !isEmail(v)) => {
   if (val == null) return;
-  if (cmp(val)) throw new EmailRuleError();
-}, 'name', { value: 'email' });
+  if (cmp(val)) throw new Errors.EmailRuleError();
+});
 
-export const required = () => Object.defineProperty((val, cmp = v => v == null) => {
-  if (cmp(val)) throw new RequiredRuleError();
-}, 'name', { value: 'required' });
+rules.required = () => makeThunk('required', (val, cmp = v => v == null) => {
+  if (cmp(val)) throw new Errors.RequiredRuleError();
+});
 
-export const selfless = () => Object.defineProperty((val, cmp = v => false) => {
+rules.selfless = () => makeThunk('selfless', (val, cmp = v => false) => {
   if (val == null) return;
-  if (cmp(val)) throw new SelflessRuleError();
-}, 'name', { value: 'selfless' });
+  if (cmp(val)) throw new Errors.SelflessRuleError();
+});
 
-export const immutable = () => Object.defineProperty((val, cmp = v => false) => {
-  if (cmp(val)) throw new ImmutableRuleError();
-}, 'name', { value: 'immutable' });
+rules.immutable = () => makeThunk('immutable', (val, cmp = v => false) => {
+  if (cmp(val)) throw new Errors.ImmutableRuleError();
+});
 
-export const norepeat = () => Object.defineProperty((val, cmp = v => false) => {
-  if (cmp(val)) throw new NoRepeatRuleError();
-}, 'name', { value: 'norepeat' });
+rules.norepeat = () => makeThunk('norepeat', (val, cmp = v => false) => {
+  if (cmp(val)) throw new Errors.NoRepeatRuleError();
+});
 
-export const distinct = () => Object.defineProperty((val, cmp = v => false) => {
-  if (cmp(val)) throw new DistinctRuleError();
-}, 'name', { value: 'distinct' });
+rules.distinct = () => makeThunk('distinct', (val, cmp = v => false) => {
+  if (cmp(val)) throw new Errors.DistinctRuleError();
+});
+
+export { Errors };
+export default rules;

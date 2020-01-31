@@ -3,7 +3,7 @@ export default `
     @quin(alias: "user", indexes: [{ name: "uix_person_name", type: unique, on: "name" }])
   {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     authored: [Book] @quin(materializeBy: "author")
     emailAddress: String! @quin(enforce: email)
     friends: [Person] @quin(transform: dedupe, enforce: [selfless], onDelete: cascade)
@@ -14,7 +14,7 @@ export default `
     @quin(indexes: [{ name: "uix_book", type: unique, on: ["name", "author"] }])
   {
     id: ID!
-    name: String! @quin(transform: titleCase, deny: "The Bible")
+    name: String! @quin(transform: toTitleCase, deny: "The Bible")
     price: Float! @quin(range: [0, 100])
     author: Person! @quin(enforce: immutable, onDelete: cascade)
     bestSeller: Boolean
@@ -26,7 +26,7 @@ export default `
     @quin(indexes: [{name: "uix_chapter", type: unique, on: ["name", "book"]}])
   {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     book: Book! @quin(onDelete: restrict)
     pages: [Page] @quin(materializeBy: "chapter")
   }
@@ -45,7 +45,7 @@ export default `
 
   type BookStore {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     location: String
     books: [Book] @quin(onDelete: cascade)
     building: Building! @quin(embedded: true, onDelete: cascade)
@@ -53,7 +53,7 @@ export default `
 
   type Library {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     location: String,
     books: [Book] @quin(onDelete: cascade)
     building: Building! @quin(embedded: true, onDelete: cascade)
@@ -61,7 +61,7 @@ export default `
 
   type Apartment {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     location: String
     building: Building! @quin(embedded: true, onDelete: cascade)
   }
@@ -84,7 +84,7 @@ export default `
 
   type Art {
     id: ID!
-    name: String! @quin(transform: titleCase)
+    name: String! @quin(transform: toTitleCase)
     bids: [Float]
     comments: [String] @quin(allow: ["yes", "no", "maybe"])
   }
