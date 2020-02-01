@@ -1,4 +1,6 @@
 import { SchemaDirectiveVisitor } from 'graphql-tools';
+import Transformer from './Transformer';
+import Rule from './Rule';
 import Schema from '../graphql/Schema';
 
 class QuinDirective extends SchemaDirectiveVisitor {
@@ -9,27 +11,32 @@ class QuinDirective extends SchemaDirectiveVisitor {
 }
 
 export default class Quin {
-  constructor(gql = {}) {
-    gql.typeDefs = gql.typeDefs || [];
-    gql.schemaDirectives = gql.schemaDirectives || {};
-    this.gql = gql;
-    this.quins = [];
+  constructor() {
+    const transformers = Transformer.defaults().map(name => ({ name, quin: new Transformer(Transformer[name]()) }));
+    const rules = Rule.defaults().map(name => ({ name, quin: new Rule(Rule[name]()) }));
+    this.quins = [...transformers, ...rules];
   }
 
-  register(...args) {
-    this.quins.push(...args);
+  register(name, quin) {
+    this.quins.push({ name, quin });
     return this;
   }
 
-  createSchema() {
-    const rules = this.quins.filter(quin => quin.type === 'rule');
-    const transformers = this.quins.filter(quin => quin.type === 'transformer');
+  mergeSchema(schema) {
+    // Identify quin
+    const rules = this.quins.filter(({ quin }) => quin.type === 'rule');
+    const transformers = this.quins.filter(({ quin }) => quin.type === 'transformer');
 
-    // Push new typeDef
-    this.gql.typeDefs.push(`
+    // Ensure schema
+    schema.typeDefs = schema.typeDefs || [];
+    schema.schemaDirectives = Object.assign(schema.schemaDirectives || {}, { quin: QuinDirective });
+    schema.typeDefs = Array.isArray(schema.typeDefs) ? schema.typeDefs : [schema.typeDefs];
+
+    // Merge schema
+    schema.typeDefs.push(`
       scalar QuinMixed
-      enum QuinEnforceEnum { ${rules.map(rule => rule.name).join(' ')} }
-      enum QuinTransformEnum  { ${transformers.map(transformer => transformer.name).join(' ')} }
+      enum QuinEnforceEnum { null ${rules.map(({ name }) => name).join(' ')} }
+      enum QuinTransformEnum  { null ${transformers.map(({ name }) => name).join(' ')} }
 
       directive @quin(
         enforce: [QuinEnforceEnum!]
@@ -37,10 +44,7 @@ export default class Quin {
       ) on OBJECT | FIELD_DEFINITION
     `);
 
-    // Merge in schemaDirectives
-    Object.assign(this.gql.schemaDirectives, { quin: QuinDirective });
-
     // Return new Schema
-    return new Schema(this.gql);
+    return new Schema(schema);
   }
 }
