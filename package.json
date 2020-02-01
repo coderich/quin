@@ -10,14 +10,14 @@
     "lint": "ratchet lint",
     "ratchet": "ratchet"
   },
-  "dependencies": {
+  "peerDependencies": {
     "graphql": "^14.6.0",
-    "graphql-tools": "^4.0.6",
-    "lodash": "^4.17.15",
-    "validator": "^12.2.0"
+    "graphql-tools": "^4.0.6"
   },
   "devDependencies": {
-    "@coderich/ratchet": "^1.2.5"
+    "@coderich/ratchet": "^1.2.5",
+    "graphql": "^14.6.0",
+    "graphql-tools": "^4.0.6"
   },
   "repository": {
     "type": "git",

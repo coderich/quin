@@ -27,4 +27,8 @@ export default class Schema {
       return prev;
     }, []);
   }
+
+  getExecutableSchema() {
+    return this.schema;
+  }
 }

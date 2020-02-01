@@ -1,4 +1,4 @@
-import isEmail from 'validator/lib/isEmail';
+// import isEmail from 'validator/lib/isEmail';
 import { makeThunk, ucFirst } from './app.service';
 
 // Rule Errors
@@ -55,10 +55,10 @@ rules.norepeat = (...args) => makeThunk('norepeat', (val, cmp = v => false) => {
 
 
 // Enforcable
-rules.email = () => makeThunk('email', (val, cmp = v => !isEmail(v)) => {
-  if (val == null) return;
-  if (cmp(val)) throw new Errors.EmailRuleError();
-});
+// rules.email = () => makeThunk('email', (val, cmp = v => !isEmail(v)) => {
+//   if (val == null) return;
+//   if (cmp(val)) throw new Errors.EmailRuleError();
+// });
 
 rules.selfless = () => makeThunk('selfless', (val, cmp = v => false) => {
   if (val == null) return;
