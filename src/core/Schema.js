@@ -2,13 +2,12 @@ import { uniqWith } from 'lodash';
 import { GraphQLObjectType } from 'graphql';
 import { makeExecutableSchema } from 'graphql-tools';
 import Model from './Model';
-import DirectiveService from '../service/directive.service';
+import { makeDirective } from '../service/app.service';
 
 export default class Schema {
   constructor(typeDef) {
-    const typeDefs = [DirectiveService.typeDefs, typeDef];
-    const { schemaDirectives } = DirectiveService;
-    this.schema = makeExecutableSchema({ typeDefs, schemaDirectives });
+    const { typeDefs, schemaDirectives } = makeDirective();
+    this.schema = makeExecutableSchema({ typeDefs: [typeDefs].concat(typeDef), schemaDirectives });
     this.models = this.getCustomTypes().map(model => new Model(this, model));
 
     const identifyOnDeletes = (parentModel) => {
@@ -48,5 +47,9 @@ export default class Schema {
 
   getModel(name) {
     return this.models.find(model => model.getName() === name);
+  }
+
+  addQuin(quin) {
+    this.quins.push(quin);
   }
 }
