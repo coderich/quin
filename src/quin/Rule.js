@@ -14,20 +14,29 @@ export default class Rule {
       },
     });
   }
-
-  static allow(...args) {
-    return (val, cmp = v => args.indexOf(v) === -1) => {
-      if (val == null) return;
-      if (cmp(val)) throw new Errors.AllowRuleError();
-    };
-  }
 }
 
+// Factory methods
+['endsWith', 'includes', 'match', 'search', 'startsWith'].forEach((name) => {
+  Rule.factory(name, (...args) => (val) => {
+    if (val === null) return;
+    if (!String(val)[name](...args)) throw new Error();
+  });
+});
+Rule.factory('allow', (...args) => (val) => {
+  if (val == null) return;
+  if (args.indexOf(val) === -1) throw new Error();
+});
+Rule.factory('deny', (...args) => (val) => {
+  if (val == null) return;
+  if (args.indexOf(val) > -1) throw new Error();
+});
+Rule.factory('range', (min, max) => {
+  if (min == null) min = undefined;
+  if (max == null) max = undefined;
 
-const rgb = new Rule('rgb', Rule.allow('red', 'green', 'blue'));
-
-
-Rule.factory('myRule', (...args) => (val) => {
-  if (val === null) return;
-  if (val > 10) throw new Error();
+  return (val) => {
+    if (val == null) return;
+    if (Number.isNaN(val) || val < min || val > max) throw new Error();
+  };
 });
