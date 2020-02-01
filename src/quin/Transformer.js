@@ -7,9 +7,11 @@ const jsStringMethods = [
 ];
 
 export default class Transformer {
-  constructor(thunk) {
-    const fn = (val, cmp = v => thunk(v)) => cmp(val);
-    return Object.defineProperties(fn, { type: { value: 'transformer' } });
+  constructor(thunk, ignoreNull) {
+    return Object.defineProperty((val, cmp = v => thunk(v)) => {
+      if (ignoreNull && val == null) return val;
+      return cmp(val);
+    }, 'type', { value: 'transformer' });
   }
 
   static defaults() {
@@ -25,8 +27,8 @@ export default class Transformer {
     ];
   }
 
-  static factory(name, thunk) {
-    Object.defineProperty(Transformer, name, { value: new Transformer(thunk) });
+  static factory(name, thunk, ignoreNull) {
+    Object.defineProperty(Transformer, name, { value: (...args) => new Transformer(thunk(...args), ignoreNull) });
   }
 }
 

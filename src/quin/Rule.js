@@ -2,14 +2,10 @@ const jsStringMethods = ['endsWith', 'includes', 'match', 'search', 'startsWith'
 
 export default class Rule {
   constructor(thunk, ignoreNull = true) {
-    const fn = (val, cmp = v => thunk(v)) => {
+    return Object.defineProperty((val, cmp = v => thunk(v)) => {
       if (ignoreNull && val == null) return;
       if (cmp(val)) throw new Error();
-    };
-
-    return Object.defineProperties(fn, {
-      type: { value: 'rule' },
-    });
+    }, 'type', { value: 'rule' });
   }
 
   static defaults() {

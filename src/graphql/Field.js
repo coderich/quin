@@ -1,7 +1,7 @@
 import Type from './Type';
 import { isScalarDataType } from '../service/app.service';
-import TransformService from '../service/transform.service';
-import RuleService from '../service/rule.service';
+import Transformer from '../quin/Transformer';
+import Rule from '../quin/Rule';
 
 export default class Field extends Type {
   constructor(schema, field) {
@@ -9,25 +9,21 @@ export default class Field extends Type {
     this.schema = schema;
     this.transforms = [];
     this.rules = [];
-    this.cast = TransformService.cast(this.getType());
+    this.cast = Transformer.cast(this.getType());
 
     // Populate transform and rule thunks
-    if (this.isRequired()) this.rules.push(RuleService.required());
+    if (this.isRequired()) this.rules.push(Rule.required());
 
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
       if (!Array.isArray(value)) value = [value];
 
       switch (key) {
-        case 'allow': case 'deny': case 'norepeat': case 'range': {
-          this.rules.push(RuleService[key](...value));
-          break;
-        }
         case 'enforce': {
-          this.rules.push(...value.map(r => RuleService[r]()));
+          this.rules.push(...value.map(r => Rule[r]()));
           break;
         }
         case 'transform': {
-          this.transforms.push(...value.map(t => TransformService[t]()));
+          this.transforms.push(...value.map(t => Transformer[t]()));
           break;
         }
         default: {

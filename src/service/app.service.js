@@ -6,8 +6,11 @@ export const castCmp = (type, value) => {
     case 'String': {
       return `${value}`;
     }
-    case 'Number': case 'Float': case 'Int': {
+    case 'Float': case 'Number': {
       return Number(value);
+    }
+    case 'Int': {
+      return parseInt(value, 10);
     }
     case 'Boolean': {
       if (value === 'true') return true;
