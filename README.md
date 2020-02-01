@@ -1,11 +1,13 @@
 # Quin
 
-### Enrich your GraphQL schema.
+### GraphQL Schema Manager.
 
-**Quin** is a [GraphQL Directive](https://www.apollographql.com/docs/graphql-tools/schema-directives/) to easily add field *transformations*, *validation*, and *meta data* to a GraphQL schema.
+> ### :construction: :construction: :construction: UNDER CONSTRUCTION :construction: :construction: :construction:
+
+**Quin** is a [GraphQL Directive](https://www.apollographql.com/docs/graphql-tools/schema-directives/) to easily manage field *transformation*, *validation*, and *meta-data* to your GraphQL schema.
 
 Features include:
-* Field *transformations* and *validation*
+* Field *transformation* and *validation*
 * Schema *meta-data*
 * Extensibility
 
@@ -21,7 +23,7 @@ Type User {
 
 ## The Quin Directive
 
-The `@quin` directive provides a variety of *key-value* pairs that can be used on various parts of your schema.
+The `@quin` directive provides a variety of *key-value* pairs that can be used to manage your schema.
 
 | key | value | example | on
 | - | - | - | -|
@@ -29,15 +31,20 @@ The `@quin` directive provides a variety of *key-value* pairs that can be used o
 | *deny* | Array of values to deny | `@quin(deny: [0, false, "false"])` | `Fields`
 | *range* | Numerical range [*min*, *max*] | `@quin(range: [0, 100])` | `Fields`
 | *norepeat* | Array of values to never repeat | `@quin(norepeat: ["special1", "special2"])` | `Fields`
-| *transform* | Array of `Transforms` to apply | `@quin(transform: [trim, toTitleCase])`| `Fields `
+| *transform* | Array of `Transformers` to apply | `@quin(transform: [trim, toTitleCase])`| `Fields `
 | *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])` | `Fields`
 
 
-#### Transforms
+#### Transformers
 
-> You may additionally use any [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) method as a *value* for the `transform` key (eg. `toLowerCase`):
+A `Transformer` is used to modify data for a particular field.
 
-| value | description
+```js
+@quin(transform: [trim, toLowerCase, ...]) // Define list of transforms
+@quin(transform: dedupe) // Shorthand for a single transform
+```
+
+| name | description
 | - | - |
 | *toTitleCase* | Transform value to titleCase
 | *toLocaleTitleCase* | Transform value to locale titleCase
@@ -46,7 +53,25 @@ The `@quin` directive provides a variety of *key-value* pairs that can be used o
 | *dedupe* | Remove any duplicates found in array
 | *timestamp* | Transform value to Date.now()
 
+> You may also use any [JavaScript String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) method as a `transformer`  (eg. `toLowerCase`)
+
 #### Rules
+
+A `Rule` is used to enforce data validation for a particular field.
+
+```
+@quin(enforce: [email, distinct]) // Define list of rules
+@quin(enforce: immutable) // Shorthand for a single rule
+```
+
+| name | description
+| - | - |
+| *email* | Enforce a valid email
+| *selfless* | Must not contain a reference to itself
+| *immutable* | Once set, value cannot be changed
+| *distinct* | List of values must be unique
+
+#### Experimental
 
 | key | value | example
 | - | - | - |
