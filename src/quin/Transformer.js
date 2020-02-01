@@ -8,9 +8,8 @@ const jsStringMethods = [
 
 export default class Transformer {
   constructor(thunk) {
-    return Object.defineProperties(thunk, {
-      type: { value: 'transformer' },
-    });
+    const fn = (val, cmp = v => thunk(v)) => cmp(val);
+    return Object.defineProperties(fn, { type: { value: 'transformer' } });
   }
 
   static defaults() {
@@ -27,7 +26,7 @@ export default class Transformer {
   }
 
   static factory(name, thunk) {
-    Object.defineProperty(Transformer, name, { value: thunk, writable: true });
+    Object.defineProperty(Transformer, name, { value: new Transformer(thunk) });
   }
 }
 

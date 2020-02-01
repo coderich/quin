@@ -48,28 +48,6 @@ export default class Field extends Type {
     return this.getType();
   }
 
-  // getGQLType(suffix) {
-  //   let type = this.getSimpleType();
-  //   if (suffix && !isScalarDataType(type)) type = this.options.embedded ? `${type}${suffix}` : 'ID';
-  //   if (this.options.enum) type = `${this.model.getName()}${ucFirst(this.getName())}Enum`;
-  //   type = this.isArray() ? `[${type}]` : type;
-  //   if (suffix !== 'InputUpdate' && this.isRequired()) type += '!';
-  //   return type;
-  // }
-
-  // getGQLDefinition() {
-  //   const fieldName = this.getName();
-  //   const type = this.getGQLType();
-  //   const ref = this.getDataRef();
-
-  //   if (ref) {
-  //     if (this.isArray()) return `${fieldName}(first: Int after: String lfield: Int before: String query: ${ref}InputQuery): Connection`;
-  //     return `${fieldName}(query: ${ref}InputQuery): ${type}`;
-  //   }
-
-  //   return `${fieldName}: ${type}`;
-  // }
-
   getDataRef() {
     const ref = this.getSimpleType();
     return isScalarDataType(ref) ? null : ref;
@@ -97,10 +75,6 @@ export default class Field extends Type {
 
   getRules() {
     return this.rules;
-  }
-
-  getOnDelete() {
-    return this.getDirectiveArg('quin', 'onDelete');
   }
 
   isCreateField() {

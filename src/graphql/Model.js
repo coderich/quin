@@ -58,30 +58,6 @@ export default class Model extends Type {
     return this.fields.filter(field => field.isScalar());
   }
 
-  getIndexes() {
-    return this.getDirectiveArg('quin', 'indexes', []).map((index) => {
-      if (!Array.isArray(index.on)) index.on = [index.on];
-      return index;
-    });
-  }
-
-  getDriver() {
-    return this.getDirectiveArg('quin', 'driver', 'default');
-  }
-
-  isHidden() {
-    return Boolean(this.getDirectiveArg('quin', 'hidden'));
-  }
-
-  isVisible() {
-    return !this.isHidden();
-  }
-
-  referentialIntegrity(refs) {
-    if (refs) this.referentials = refs;
-    return this.referentials;
-  }
-
   transform(data, mapper) {
     if (data == null) data = {};
     if (mapper == null) mapper = {};
