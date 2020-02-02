@@ -1,7 +1,7 @@
 import isEmail from 'validator/lib/isEmail';
-import Quin from '../src/quin/Quin';
-import Rule from '../src/quin/Rule';
-import Transformer from '../src/quin/Transformer';
+import Quin from '../src/core/Quin';
+import Rule from '../src/core/Rule';
+import Transformer from '../src/core/Transformer';
 
 // Adding new rules
 Rule.factory('email', () => v => !isEmail(v));

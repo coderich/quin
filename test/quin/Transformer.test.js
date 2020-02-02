@@ -1,4 +1,4 @@
-import Transformer from '../../src/quin/Transformer';
+import Transformer from '../../src/core/Transformer';
 
 describe('Transformer', () => {
   test('case', () => {

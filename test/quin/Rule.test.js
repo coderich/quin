@@ -1,5 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
-import Rule from '../../src/quin/Rule';
+import Rule from '../../src/core/Rule';
 
 describe('Rule', () => {
   test('allow', () => {

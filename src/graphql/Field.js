@@ -1,6 +1,6 @@
 import Type from './Type';
-import Rule from '../quin/Rule';
-import Transformer from '../quin/Transformer';
+import Rule from '../core/Rule';
+import Transformer from '../core/Transformer';
 
 export default class Field extends Type {
   constructor(schema, field) {

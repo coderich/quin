@@ -1,4 +1,4 @@
-import Quin from '../../src/quin/Quin';
+import Quin from '../../src/core/Quin';
 import graphSchema from '../schema';
 
 const schema = new Quin(graphSchema);
