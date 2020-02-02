@@ -7,6 +7,7 @@ export default {
       emailAddress: String! @quin(enforce: email)
       friends: [Person] @quin(transform: dedupe)
       status: String
+      hero: String @quin(transform: richard)
     }
 
     type Book {

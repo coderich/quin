@@ -9,7 +9,7 @@ const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookCh
 
 describe('Schema', () => {
   test('sanity', () => {
-    expect(personFields.length).toBe(6);
+    expect(personFields.length).toBe(7);
     expect(bookFields.length).toBe(7);
   });
 
@@ -27,7 +27,7 @@ describe('Schema', () => {
     expect(Person.getField('authored')).toBe(personAuthored);
     expect(Person.getField('authored.id')).toBe(bookId);
     expect(Person.getField('authored.name')).toBe(bookName);
-    expect(Person.getScalarFields().length).toEqual(4);
+    expect(Person.getScalarFields().length).toEqual(5);
     expect(Person.getArrayFields().length).toEqual(2);
     expect(Person.getDataRefFields()).toEqual([personAuthored, personFriends]);
   });

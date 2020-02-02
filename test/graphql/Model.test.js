@@ -9,6 +9,7 @@ describe('Model', () => {
     expect(Person.transform({ name: 'rich' })).toEqual({ name: 'Rich' });
     expect(Person.transform({ name: 'RICH' })).toEqual({ name: 'Rich' });
     expect(Person.transform({ name: 'RicH' })).toEqual({ name: 'Rich' });
+    expect(Person.transform({ name: 'RicH', hero: 'paul' })).toEqual({ name: 'Rich', hero: 'richard' });
   });
 
   test('Rules', () => {
