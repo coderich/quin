@@ -1,5 +1,4 @@
 import Type from './Type';
-import { isScalarDataType } from '../service/app.service';
 import Transformer from '../quin/Transformer';
 import Rule from '../quin/Rule';
 
@@ -31,70 +30,6 @@ export default class Field extends Type {
         }
       }
     });
-  }
-
-  getDataType() {
-    const type = this.getType();
-    if (!this.isArray()) return type;
-    const isSet = this.getDirectiveArg('quin', 'transform', '').indexOf('dedupe') > -1;
-    return Object.assign([type], { isSet });
-  }
-
-  getSimpleType() {
-    return this.getType();
-  }
-
-  getDataRef() {
-    const ref = this.getSimpleType();
-    return isScalarDataType(ref) ? null : ref;
-  }
-
-  getModelRef() {
-    return this.schema.getModel(this.getDataRef());
-  }
-
-  getVirtualRef() {
-    return this.getDirectiveArg('quin', 'materializeBy');
-  }
-
-  getVirtualModel() {
-    return this.schema.getModel(this.getSimpleType());
-  }
-
-  getVirtualField() {
-    return this.getVirtualModel().getField(this.getVirtualRef());
-  }
-
-  getTransforms() {
-    return this.transforms;
-  }
-
-  getRules() {
-    return this.rules;
-  }
-
-  isCreateField() {
-    return this.getSimpleType() !== 'ID' && !this.isVirtual();
-  }
-
-  isUpdateField() {
-    return this.isCreateField() && !this.isImmutable();
-  }
-
-  isVirtual() {
-    return this.isMaterialized();
-  }
-
-  isMaterialized() {
-    return Boolean(this.getDirectiveArg('quin', 'materializeBy'));
-  }
-
-  isImmutable() {
-    return this.getDirectiveArg('quin', 'enforce', '').indexOf('immutable') > -1;
-  }
-
-  isEmbedded() {
-    return Boolean(this.getDirectiveArg('quin', 'embedded'));
   }
 
   transform(value, mapper) {

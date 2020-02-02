@@ -7,11 +7,6 @@ let schema;
 const quin = new Quin();
 
 describe('Quin', () => {
-  test('mergeSchema', () => {
-    schema = quin.mergeSchema(graphSchema);
-    expect(schema).toBeDefined();
-  });
-
   test('register', () => {
     // Incorrect
     expect(() => quin.register()).toThrow();
@@ -33,5 +28,13 @@ describe('Quin', () => {
     quin.register(Transformer.factory('myTransformer', () => {})()); // Instantiating instance
     expect(Rule.myRule).toBeDefined();
     expect(Transformer.myTransformer).toBeDefined();
+  });
+
+  test('mergeSchema', () => {
+    schema = quin.mergeSchema(graphSchema);
+    expect(schema).toBeDefined();
+
+    const models = schema.getModels();
+    expect(models.length).toBe(10);
   });
 });

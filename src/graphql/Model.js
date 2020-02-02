@@ -30,34 +30,6 @@ export default class Model extends Type {
     return field;
   }
 
-  getEmbeddedArrayFields() {
-    return this.fields.filter(field => field.isArray() && !field.isVirtual());
-  }
-
-  getCountableFields() {
-    return this.fields.filter(field => field.isArray() && field.getDataRef());
-  }
-
-  getCreateFields() {
-    return this.fields.filter(field => field.isCreateField());
-  }
-
-  getUpdateFields() {
-    return this.fields.filter(field => field.isUpdateField());
-  }
-
-  getDataRefFields() {
-    return this.fields.filter(field => Boolean(field.getDataRef()));
-  }
-
-  getOnDeleteFields() {
-    return this.fields.filter(field => Boolean(field.getDataRef()) && Boolean(field.getOnDelete()));
-  }
-
-  getScalarFields() {
-    return this.fields.filter(field => field.isScalar());
-  }
-
   transform(data, mapper) {
     if (data == null) data = {};
     if (mapper == null) mapper = {};
