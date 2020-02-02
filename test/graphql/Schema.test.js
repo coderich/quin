@@ -1,8 +1,7 @@
 import Quin from '../../src/quin/Quin';
 import graphSchema from '../schema';
 
-const quin = new Quin();
-const schema = quin.mergeSchema(graphSchema);
+const schema = new Quin(graphSchema);
 const { Person, Book, Building } = schema.getModelMap();
 const [personFields, bookFields] = [Person.getFields(), Book.getFields()];
 const [personId, personName, personAuthored,, personFriends] = personFields;

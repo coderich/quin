@@ -3,8 +3,13 @@ import { makeExecutableSchema } from 'graphql-tools';
 import Model from './Model';
 
 export default class Schema {
-  constructor(gql) {
+  constructor(gql, rules, transformers) {
+    //
     this.schema = makeExecutableSchema(gql);
+    this.rules = rules.reduce((prev, { name, instance }) => Object.assign(prev, { [name]: instance }), {});
+    this.transformers = transformers.reduce((prev, { name, instance }) => Object.assign(prev, { [name]: instance }), {});
+
+    //
     this.models = this.getCustomTypes().map(model => new Model(this, model));
     this.toString = () => gql;
   }
@@ -26,6 +31,14 @@ export default class Schema {
       if (!key.startsWith('__') && value instanceof GraphQLObjectType) prev.push(value);
       return prev;
     }, []);
+  }
+
+  getRules() {
+    return this.rules;
+  }
+
+  getTransformers() {
+    return this.transformers;
   }
 
   getExecutableSchema() {

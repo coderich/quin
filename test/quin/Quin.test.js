@@ -3,29 +3,26 @@ import Rule from '../../src/quin/Rule';
 import Transformer from '../../src/quin/Transformer';
 import graphSchema from '../schema';
 
-let schema;
-const quin = new Quin();
-
 describe('Quin', () => {
-  test('register', () => {
+  test('factory', () => {
     // Incorrect
-    expect(() => quin.register()).toThrow();
-    expect(() => quin.register('bull')).toThrow();
-    expect(() => quin.register('bull', () => {})).toThrow();
-    expect(() => quin.register('bs', new Rule())).toThrow();
-    expect(() => quin.register('nope', new Rule(() => {}))).toThrow();
-    expect(() => quin.register('bad', Rule.required)).toThrow();
-    expect(() => quin.register('a', Rule.factory('badRule'))).toThrow();
-    expect(() => quin.register('b', Rule.factory('badRule', () => {}))).toThrow();
-    expect(() => quin.register('c', new Transformer())).toThrow();
-    expect(() => quin.register('d', new Transformer(() => {}))).toThrow();
-    expect(() => quin.register('e', Transformer.toLowerCase)).toThrow();
-    expect(() => quin.register('f', Transformer.factory('badTransformer'))).toThrow();
-    expect(() => quin.register('g', Transformer.factory('badTransformer', () => {}))).toThrow();
+    expect(() => Quin.factory()).toThrow();
+    expect(() => Quin.factory('bull')).toThrow();
+    expect(() => Quin.factory('bull', () => {})).toThrow();
+    expect(() => Quin.factory('bs', new Rule())).toThrow();
+    expect(() => Quin.factory('nope', new Rule(() => {}))).toThrow();
+    expect(() => Quin.factory('bad', Rule.required)).toThrow();
+    expect(() => Quin.factory('a', Rule.factory('badRule'))).toThrow();
+    expect(() => Quin.factory('b', Rule.factory('badRule', () => {}))).toThrow();
+    expect(() => Quin.factory('c', new Transformer())).toThrow();
+    expect(() => Quin.factory('d', new Transformer(() => {}))).toThrow();
+    expect(() => Quin.factory('e', Transformer.toLowerCase)).toThrow();
+    expect(() => Quin.factory('f', Transformer.factory('badTransformer'))).toThrow();
+    expect(() => Quin.factory('g', Transformer.factory('badTransformer', () => {}))).toThrow();
 
     // Proper
-    const rule = quin.register('rule', Rule.factory('myRule', () => {})()); // Instantiating instance
-    const transformer = quin.register('transformer', Transformer.factory('myTransformer', () => {})()); // Instantiating instance
+    const rule = Quin.factory('rule', Rule.factory('myRule', () => {})()); // Instantiating instance
+    const transformer = Quin.factory('transformer', Transformer.factory('myTransformer', () => {})()); // Instantiating instance
     expect(Rule.myRule).toBeDefined();
     expect(rule).toBeDefined();
     expect(rule.method).toBe('myRule');
@@ -36,11 +33,20 @@ describe('Quin', () => {
     expect(transformer.type).toBe('transformer');
   });
 
-  test('mergeSchema', () => {
-    schema = quin.mergeSchema(graphSchema);
+  test('schema', () => {
+    const schema = new Quin(graphSchema);
     expect(schema).toBeDefined();
 
-    const models = schema.getModels();
-    expect(models.length).toBe(10);
+    const { email, bookName } = schema.getRules();
+    const { toLowerCase } = schema.getTransformers();
+
+    expect(email).toBeDefined();
+    expect(toLowerCase).toBeDefined();
+    expect(bookName).toBeDefined();
+
+    expect(() => email('hi')).toThrow();
+    expect(() => email('me@me.com')).not.toThrow();
+    expect(() => bookName('The Bible')).toThrow();
+    expect(() => bookName('Anything else')).not.toThrow();
   });
 });

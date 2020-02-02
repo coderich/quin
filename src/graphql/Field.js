@@ -1,6 +1,6 @@
 import Type from './Type';
-import Transformer from '../quin/Transformer';
 import Rule from '../quin/Rule';
+import Transformer from '../quin/Transformer';
 
 export default class Field extends Type {
   constructor(schema, field) {
@@ -9,8 +9,6 @@ export default class Field extends Type {
     this.transforms = [];
     this.rules = [];
     this.cast = Transformer.cast(this.getType());
-
-    // Populate transform and rule thunks
     if (this.isRequired()) this.rules.push(Rule.required());
 
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
@@ -18,11 +16,11 @@ export default class Field extends Type {
 
       switch (key) {
         case 'enforce': {
-          this.rules.push(...value.map(r => Rule[r]()));
+          this.rules.push(...value.map(r => schema.getRules()[r]));
           break;
         }
         case 'transform': {
-          this.transforms.push(...value.map(t => Transformer[t]()));
+          this.transforms.push(...value.map(t => schema.getTransformers()[t]));
           break;
         }
         default: {
@@ -40,7 +38,7 @@ export default class Field extends Type {
     if (mapper == null) mapper = {};
 
     return this.transforms.concat(this.cast).reduce((prev, transform) => {
-      const cmp = mapper[transform.name];
+      const cmp = mapper[transform.method];
       if (Array.isArray(prev)) return prev.map(p => transform(p, cmp));
       return transform(prev, cmp);
     }, value);
@@ -50,7 +48,7 @@ export default class Field extends Type {
     if (mapper == null) mapper = {};
 
     return Promise.all(this.rules.map((rule) => {
-      const cmp = mapper[rule.name];
+      const cmp = mapper[rule.method];
       if (Array.isArray(value)) return value.map(v => rule(v, cmp));
       return rule(value, cmp);
     }));

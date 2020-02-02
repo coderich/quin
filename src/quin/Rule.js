@@ -4,7 +4,7 @@ export default class Rule {
   constructor(thunk, ignoreNull = true) {
     return Object.defineProperty((val, cmp = v => thunk(v)) => {
       if (ignoreNull && val == null) return;
-      if (cmp(val)) throw new Error();
+      if (cmp(val)) throw new Error('Rule error');
     }, 'type', { value: 'rule' });
   }
 

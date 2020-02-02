@@ -4,15 +4,15 @@ export default {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       authored: [Book]
-      emailAddress: String!
+      emailAddress: String! @quin(enforce: email)
       friends: [Person] @quin(transform: dedupe)
       status: String
     }
 
     type Book {
       id: ID!
-      name: String! @quin(transform: toTitleCase)
-      price: Float!
+      name: String! @quin(transform: toTitleCase, enforce: bookName)
+      price: Float! @quin(enforce: bookPrice)
       author: Person!
       bestSeller: Boolean
       bids: [Int]
@@ -74,7 +74,7 @@ export default {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       bids: [Float]
-      comments: [String]
+      comments: [String] @quin(enforce: artComment)
     }
   `
 };
