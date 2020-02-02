@@ -28,7 +28,9 @@ export default class Transformer {
   }
 
   static factory(name, thunk, ignoreNull) {
-    Object.defineProperty(Transformer, name, { value: (...args) => new Transformer(thunk(...args), ignoreNull) });
+    return Object.defineProperty(Transformer, name, {
+      value: (...args) => Object.defineProperty(new Transformer(thunk(...args), ignoreNull), 'name', { value: name }),
+    })[name];
   }
 }
 

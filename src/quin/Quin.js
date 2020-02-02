@@ -12,20 +12,24 @@ class QuinDirective extends SchemaDirectiveVisitor {
 
 export default class Quin {
   constructor() {
-    const transformers = Transformer.defaults().map(name => ({ name, quin: new Transformer(Transformer[name]()) }));
-    const rules = Rule.defaults().map(name => ({ name, quin: new Rule(Rule[name]()) }));
-    this.quins = [...transformers, ...rules];
+    const transformers = Transformer.defaults().map(name => Transformer[name]()); // Create default instances
+    const rules = Rule.defaults().map(name => Rule[name]()); // Create default instances
+    this.instances = [...transformers, ...rules];
   }
 
-  register(name, quin) {
-    this.quins.push({ name, quin });
-    return this;
+  register(instance) {
+    const invalidArg = () => { throw new Error('Invalid argument; expected Rule|Transformer factory instance'); };
+    const { name = invalidArg(), type = invalidArg() } = instance;
+    const factoryMethod = (type === 'rule' ? Rule[name] : Transformer[name]);
+    if (!factoryMethod) invalidArg();
+    this.instances.push(instance);
+    return instance;
   }
 
   mergeSchema(schema) {
-    // Identify quin
-    const rules = this.quins.filter(({ quin }) => quin.type === 'rule');
-    const transformers = this.quins.filter(({ quin }) => quin.type === 'transformer');
+    // Identify instances
+    const rules = this.instances.filter(instance => instance.type === 'rule');
+    const transformers = this.instances.filter(instance => instance.type === 'transformer');
 
     // Ensure schema
     schema.typeDefs = schema.typeDefs || [];

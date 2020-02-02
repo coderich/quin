@@ -13,7 +13,9 @@ export default class Rule {
   }
 
   static factory(name, thunk, ignoreNull) {
-    Object.defineProperty(Rule, name, { value: (...args) => new Rule(thunk(...args), ignoreNull) });
+    return Object.defineProperty(Rule, name, {
+      value: (...args) => Object.defineProperty(new Rule(thunk(...args), ignoreNull), 'name', { value: name }),
+    })[name];
   }
 }
 
