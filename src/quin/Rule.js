@@ -8,20 +8,17 @@ export default class Rule {
     }, 'type', { value: 'rule' });
   }
 
-  static defaults() {
-    return ['required'];
-  }
-
-  static factory(name, thunk, ignoreNull) {
+  static factory(name, thunk, ignoreNull = true, descriptor = {}) {
     return Object.defineProperty(Rule, name, {
-      value: (...args) => Object.defineProperty(new Rule(thunk(...args), ignoreNull), 'name', { value: name }),
+      value: (...args) => Object.defineProperty(new Rule(thunk(...args), ignoreNull), 'method', { value: name }),
+      ...descriptor,
     })[name];
   }
 }
 
 // Factory methods
 jsStringMethods.forEach(name => Rule.factory(name, (...args) => val => !String(val)[name](...args)));
-Rule.factory('required', () => val => val == null, false);
+Rule.factory('required', () => val => val == null, false, { enumerable: true });
 Rule.factory('allow', (...args) => val => args.indexOf(val) === -1);
 Rule.factory('deny', (...args) => val => args.indexOf(val) > -1);
 Rule.factory('range', (min, max) => {

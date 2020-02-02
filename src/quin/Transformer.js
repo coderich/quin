@@ -14,32 +14,21 @@ export default class Transformer {
     }, 'type', { value: 'transformer' });
   }
 
-  static defaults() {
-    return [
-      'toLowerCase',
-      'toUpperCase',
-      'toTitleCase',
-      'toSentenceCase',
-      'trim',
-      'dedupe',
-      'toString',
-      'timestamp',
-    ];
-  }
-
-  static factory(name, thunk, ignoreNull) {
+  static factory(name, thunk, ignoreNull = true, descriptor = {}) {
     return Object.defineProperty(Transformer, name, {
-      value: (...args) => Object.defineProperty(new Transformer(thunk(...args), ignoreNull), 'name', { value: name }),
+      value: (...args) => Object.defineProperty(new Transformer(thunk(...args), ignoreNull), 'method', { value: name }),
+      ...descriptor,
     })[name];
   }
 }
 
 // Factory methods
-jsStringMethods.forEach(name => Transformer.factory(name, (...args) => v => String(v)[name](...args)));
-Transformer.factory('toTitleCase', () => v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()));
+const enumerables = ['toLowerCase', 'toUpperCase', 'trim', 'toString'];
+jsStringMethods.forEach(name => Transformer.factory(name, (...args) => v => String(v)[name](...args), true, { enumerable: enumerables.indexOf(name) > -1 }));
+Transformer.factory('toTitleCase', () => v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()), true, { enumerable: true });
 Transformer.factory('toLocaleTitleCase', (...args) => v => v.replace(/\w\S*/g, w => w.charAt(0).toLocaleUpperCase(...args) + w.slice(1).toLocaleLowerCase()));
-Transformer.factory('toSentenceCase', () => v => v.charAt(0).toUpperCase() + v.slice(1));
+Transformer.factory('toSentenceCase', () => v => v.charAt(0).toUpperCase() + v.slice(1), true, { enumerable: true });
 Transformer.factory('toLocaleSentenceCase', (...args) => v => v.charAt(0).toLocaleUpperCase(...args) + v.slice(1));
-Transformer.factory('dedupe', () => v => [...new Set(v)]);
-Transformer.factory('timestamp', () => v => Date.now());
+Transformer.factory('dedupe', () => v => [...new Set(v)], true, { enumerable: true });
+Transformer.factory('timestamp', () => v => Date.now(), true, { enumerable: true });
 Transformer.factory('cast', type => v => castCmp(type, v));

@@ -32,6 +32,10 @@ export default class Field extends Type {
     });
   }
 
+  getModelRef() {
+    return this.schema.getModel(this.getDataRef());
+  }
+
   transform(value, mapper) {
     if (mapper == null) mapper = {};
 

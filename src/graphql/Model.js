@@ -30,6 +30,18 @@ export default class Model extends Type {
     return field;
   }
 
+  getScalarFields() {
+    return this.fields.filter(field => field.isScalar());
+  }
+
+  getArrayFields() {
+    return this.fields.filter(field => field.isArray());
+  }
+
+  getDataRefFields() {
+    return this.fields.filter(field => Boolean(field.getDataRef()));
+  }
+
   transform(data, mapper) {
     if (data == null) data = {};
     if (mapper == null) mapper = {};

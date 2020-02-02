@@ -10,26 +10,30 @@ class QuinDirective extends SchemaDirectiveVisitor {
   }
 }
 
+// const transformers = Transformer.defaults().map(name => ({ name, instance: Transformer[name]() })); // Create default instances
+// const rules = Rule.defaults().map(name => ({ name, instance: Rule[name]() })); // Create default instances
+// const instances = [...transformers, ...rules];
+
 export default class Quin {
   constructor() {
-    const transformers = Transformer.defaults().map(name => Transformer[name]()); // Create default instances
-    const rules = Rule.defaults().map(name => Rule[name]()); // Create default instances
+    const transformers = Object.entries(Transformer).map(([name, method]) => ({ name, instance: method() })); // Create default instances
+    const rules = Object.entries(Rule).map(([name, method]) => ({ name, instance: method() })); // Create default instances
     this.instances = [...transformers, ...rules];
   }
 
-  register(instance) {
+  register(name, instance) {
     const invalidArg = () => { throw new Error('Invalid argument; expected Rule|Transformer factory instance'); };
-    const { name = invalidArg(), type = invalidArg() } = instance;
-    const factoryMethod = (type === 'rule' ? Rule[name] : Transformer[name]);
+    const { method = invalidArg(), type = invalidArg() } = instance;
+    const factoryMethod = (type === 'rule' ? Rule[method] : Transformer[method]);
     if (!factoryMethod) invalidArg();
-    this.instances.push(instance);
+    this.instances.push({ name, instance });
     return instance;
   }
 
   mergeSchema(schema) {
     // Identify instances
-    const rules = this.instances.filter(instance => instance.type === 'rule');
-    const transformers = this.instances.filter(instance => instance.type === 'transformer');
+    const rules = this.instances.filter(({ instance }) => instance.type === 'rule');
+    const transformers = this.instances.filter(({ instance }) => instance.type === 'transformer');
 
     // Ensure schema
     schema.typeDefs = schema.typeDefs || [];
@@ -50,5 +54,13 @@ export default class Quin {
 
     // Return new Schema
     return new Schema(schema);
+  }
+
+  static factory(name, instance) {
+    const invalidArg = () => { throw new Error('Invalid argument; expected Rule|Transformer factory instance'); };
+    const { method = invalidArg(), type = invalidArg() } = instance;
+    const factoryMethod = (type === 'rule' ? Rule[method] : Transformer[method]);
+    if (!factoryMethod) invalidArg();
+    return Object.defineProperty(Quin, name, { value: instance, enumerable: true })[name];
   }
 }

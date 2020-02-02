@@ -6,6 +6,7 @@ export default class Type {
   constructor(ast) {
     this.ast = ast;
     this.directives = this.ast.astNode.directives.map(directive => new Directive(directive));
+    this.toString = () => `${this.getName()}`;
   }
 
   getName() {
@@ -14,6 +15,11 @@ export default class Type {
 
   getType() {
     return `${getNamedType(this.ast.type)}`;
+  }
+
+  getDataRef() {
+    const ref = this.getType();
+    return isScalarDataType(ref) ? null : ref;
   }
 
   getDirective(name) {
@@ -32,23 +38,15 @@ export default class Type {
     return directive.getArgs();
   }
 
-  getAlias(defaultValue) {
-    return this.getDirectiveArg('quin', 'alias', defaultValue || this.getName());
-  }
-
   isArray() {
     return isListType(this.ast.type);
   }
 
   isScalar() {
-    return isScalarDataType(this.getSimpleType());
+    return isScalarDataType(this.getType());
   }
 
   isRequired() {
     return isNonNullType(this.ast.type);
-  }
-
-  toString() {
-    return `${this.getName()}`;
   }
 }
