@@ -47,7 +47,7 @@ export default class Quin {
     return new Schema(schema, rules, transformers);
   }
 
-  static factory(name, instance) {
+  static extend(name, instance) {
     const invalidArg = () => { throw new Error('Invalid argument; expected Rule|Transformer factory instance'); };
     const { method = invalidArg(), type = invalidArg() } = instance;
     const factoryMethod = (type === 'rule' ? Rule[method] : Transformer[method]);

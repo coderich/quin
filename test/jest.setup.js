@@ -10,11 +10,11 @@ Rule.factory('email', () => v => !isEmail(v));
 Transformer.factory('richard', () => v => 'richard');
 
 // Adding Rules/Transformers
-Quin.factory('email', Rule.email());
-Quin.factory('bookName', Rule.deny('The Bible'));
-Quin.factory('bookPrice', Rule.range(0, 100));
-Quin.factory('artComment', Rule.allow('yes', 'no', 'maybe'));
-Quin.factory('richard', Transformer.richard());
+Quin.extend('email', Rule.email());
+Quin.extend('bookName', Rule.deny('The Bible'));
+Quin.extend('bookPrice', Rule.range(0, 100));
+Quin.extend('artComment', Rule.allow('yes', 'no', 'maybe'));
+Quin.extend('richard', Transformer.richard());
 
 // Adding custom keys
 Quin.custom('alias: Mixed');

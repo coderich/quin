@@ -6,23 +6,23 @@ import graphSchema from '../schema';
 describe('Quin', () => {
   test('factory', () => {
     // Incorrect
-    expect(() => Quin.factory()).toThrow();
-    expect(() => Quin.factory('bull')).toThrow();
-    expect(() => Quin.factory('bull', () => {})).toThrow();
-    expect(() => Quin.factory('bs', new Rule())).toThrow();
-    expect(() => Quin.factory('nope', new Rule(() => {}))).toThrow();
-    expect(() => Quin.factory('bad', Rule.required)).toThrow();
-    expect(() => Quin.factory('a', Rule.factory('badRule'))).toThrow();
-    expect(() => Quin.factory('b', Rule.factory('badRule', () => {}))).toThrow();
-    expect(() => Quin.factory('c', new Transformer())).toThrow();
-    expect(() => Quin.factory('d', new Transformer(() => {}))).toThrow();
-    expect(() => Quin.factory('e', Transformer.toLowerCase)).toThrow();
-    expect(() => Quin.factory('f', Transformer.factory('badTransformer'))).toThrow();
-    expect(() => Quin.factory('g', Transformer.factory('badTransformer', () => {}))).toThrow();
+    expect(() => Quin.extend()).toThrow();
+    expect(() => Quin.extend('bull')).toThrow();
+    expect(() => Quin.extend('bull', () => {})).toThrow();
+    expect(() => Quin.extend('bs', new Rule())).toThrow();
+    expect(() => Quin.extend('nope', new Rule(() => {}))).toThrow();
+    expect(() => Quin.extend('bad', Rule.required)).toThrow();
+    expect(() => Quin.extend('a', Rule.factory('badRule'))).toThrow();
+    expect(() => Quin.extend('b', Rule.factory('badRule', () => {}))).toThrow();
+    expect(() => Quin.extend('c', new Transformer())).toThrow();
+    expect(() => Quin.extend('d', new Transformer(() => {}))).toThrow();
+    expect(() => Quin.extend('e', Transformer.toLowerCase)).toThrow();
+    expect(() => Quin.extend('f', Transformer.factory('badTransformer'))).toThrow();
+    expect(() => Quin.extend('g', Transformer.factory('badTransformer', () => {}))).toThrow();
 
     // Proper
-    const rule = Quin.factory('rule', Rule.factory('myRule', () => {})()); // Instantiating instance
-    const transformer = Quin.factory('transformer', Transformer.factory('myTransformer', () => {})()); // Instantiating instance
+    const rule = Quin.extend('rule', Rule.factory('myRule', () => {})()); // Instantiating instance
+    const transformer = Quin.extend('transformer', Transformer.factory('myTransformer', () => {})()); // Instantiating instance
     expect(Rule.myRule).toBeDefined();
     expect(rule).toBeDefined();
     expect(rule.method).toBe('myRule');
