@@ -15,3 +15,12 @@ Quin.factory('bookName', Rule.deny('The Bible'));
 Quin.factory('bookPrice', Rule.range(0, 100));
 Quin.factory('artComment', Rule.allow('yes', 'no', 'maybe'));
 Quin.factory('richard', Transformer.richard());
+
+// Extends
+Quin.extend('alias: Mixed');
+Quin.extend('onDelete: OnDeleteEnum');
+Quin.extend('indexes: [IndexInput!]');
+
+// Quin.extend('alias').scalar('Mixed');
+// Quin.extend('onDelete').enum('OnDeleteEnum', ['cascade', 'nullify', 'restrict']);
+// Quin.extend('indexes').input('[IndexInput!]', '{ name: String, type: String!, on: [String!]! }');
