@@ -13,35 +13,6 @@ class QuinDirective extends SchemaDirectiveVisitor {
   }
 }
 
-class DirectiveBuilder {
-  constructor(def) {
-    // this.type = (def) => {
-    //   this.directiveDef = `${key}: ${def}`;
-    //   this.typeDef = '';
-    // };
-
-    // this.scalar = (def) => {
-    //   const type = def.replace(/[[\]!]+/g, '');
-    //   this.directiveDef = `${key}: ${def}`;
-    //   this.typeDef = `scalar ${type}`;
-    // };
-
-    // this.enum = (def, args) => {
-    //   const type = def.replace(/[[\]!]+/g, '');
-    //   this.directiveDef = `${key}: ${def}`;
-    //   this.typeDef = `enum ${type} { ${args.join(' ')} }`;
-    // };
-
-    // this.input = (def, gql) => {
-    //   const type = def.replace(/[[\]!]+/g, '');
-    //   this.directiveDef = `${key}: ${def}`;
-    //   this.typeDef = `input ${type} ${gql}`;
-    // };
-
-    customDirectives.push(def);
-  }
-}
-
 export default class Quin {
   constructor(schema) {
     // Identify instances
@@ -71,8 +42,6 @@ export default class Quin {
       ) on OBJECT | FIELD_DEFINITION
     `;
 
-    console.log(quinDirective);
-
     // Return new Schema
     schema.typeDefs.push(quinDirective);
     return new Schema(schema, rules, transformers);
@@ -86,7 +55,7 @@ export default class Quin {
     return (instances[name] = instance);
   }
 
-  static extend(key, type) {
-    return new DirectiveBuilder(key, type);
+  static custom(def) {
+    customDirectives.push(def);
   }
 }

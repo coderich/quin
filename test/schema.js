@@ -2,7 +2,9 @@ export default {
   typeDefs: `
     scalar Mixed
     enum OnDeleteEnum { cascade nullify restrict }
-    input IndexInput
+    enum IndexEnum { unique }
+    input IndexInput { name: String type: IndexEnum! on: [String!]! }
+
     type Person {
       id: ID!
       name: String! @quin(transform: toTitleCase)
@@ -14,7 +16,7 @@ export default {
     }
 
     type Book
-      @quin(indexes: [{ names: "uix_bookstore", type: "unique", on: ["name"] }]),
+      @quin(indexes: [{ names: "uix_bookstore", type: unique, on: ["name"] }]),
     {
       id: ID!
       name: String! @quin(transform: toTitleCase, enforce: bookName)
