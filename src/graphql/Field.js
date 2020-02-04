@@ -31,7 +31,7 @@ export default class Field extends Type {
   }
 
   getModelRef() {
-    return this.schema.getModel(this.getDataRef());
+    return this.schema.getModels()[this.getDataRef()];
   }
 
   transform(value, mapper) {

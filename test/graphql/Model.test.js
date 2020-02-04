@@ -2,7 +2,7 @@ import Quin from '../../src/core/Quin';
 import graphSchema from '../schema';
 
 const schema = new Quin(graphSchema);
-const { Person, Book, Art } = schema.getModelMap();
+const { Person, Book, Art } = schema.getModels();
 
 describe('Model', () => {
   test('Transform', () => {

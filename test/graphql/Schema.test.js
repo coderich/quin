@@ -2,7 +2,7 @@ import Quin from '../../src/core/Quin';
 import graphSchema from '../schema';
 
 const schema = new Quin(graphSchema);
-const { Person, Book, Building } = schema.getModelMap();
+const { Person, Book, Building } = schema.getModels();
 const [personFields, bookFields] = [Person.getFields(), Book.getFields()];
 const [personId, personName, personAuthored,, personFriends] = personFields;
 const [bookId, bookName, bookPrice, bookAuthor, bookBestSeller, bookBids, bookChapters] = bookFields;
@@ -14,10 +14,10 @@ describe('Schema', () => {
   });
 
   test('schema', () => {
-    expect(schema.getModels().length).toBe(10);
-    expect(schema.getModel('Person')).toBe(Person);
-    expect(schema.getModel('Book')).toBe(Book);
-    expect(schema.getModel('Building')).toBe(Building);
+    expect(Object.keys(schema.getModels()).length).toBe(10);
+    expect(schema.getModels().Person).toBe(Person);
+    expect(schema.getModels().Book).toBe(Book);
+    expect(schema.getModels().Building).toBe(Building);
   });
 
   test('personModel', () => {
