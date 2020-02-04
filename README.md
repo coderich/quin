@@ -68,18 +68,14 @@ There are no default `Rules` other than the *required* rule. The *required* `Rul
 #### Schema
 
 ```js
-// Call BEFORE making GraphQL Executable Schema
-// This call modifies gql to support @quin directive
-const schema = new Quin(gql);
+const schema = new Quin(gql); // Call BEFORE makeExecutableSchema(). Modifies gql.
 ```
 
 | API | description | Returns
 | - | - | - |
-| `schema.getModels()` | Retrieve array of `models` | `[model]`
-| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
-| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
-| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
-| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
+| `schema.getModels()` | Retrieve map of all `models` | `Map <model>`
+| `schema.getRules()` | Retrieve map of all `rules` | `Map <rule>`
+| `schema.getTransformers()` | Retrieve map of all `transformers` | `Map <transformer>`
 | `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
 
 #### Model
@@ -90,12 +86,9 @@ const model = schema.getModel('User');
 
 | API | description | Returns
 | - | - | - |
-| `schema.getModels()` | Retrieve array of `models` | `[model]`
-| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
-| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
-| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
-| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
-| `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
+| `model.getFields()` | Retrieve map of all `models` | `Map <model>`
+| `model.transform(data, mapper)` | Retrieve map of all `rules` | `Map <rule>`
+| `model.validate(data, mapper)` | Retrieve map of all `transformers` | `Map <transformer>`
 
 #### Field
 
@@ -105,12 +98,8 @@ const field = model.getField('emailAddress');
 
 | API | description | Returns
 | - | - | - |
-| `schema.getModels()` | Retrieve array of `models` | `[model]`
-| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
-| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
-| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
-| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
-| `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
+| `field.transform(data, mapper)` | Apply all field `transformers` to *data* | Transformed data
+| `field.validate(data, mapper)` | First performs a `transform(...)` then enforces all `rules` | Transformed data or `Throws Error`
 
 ## Extending Quin
 
