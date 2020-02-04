@@ -24,8 +24,8 @@ Type User {
 Validate schema at runtime:
 
 ```js
-const quinSchema = new Quin(schema);
-const userModel = quinSchema.getModel('User');
+const schema = new Quin(gql);
+const userModel = schema.getModel('User');
 
 // Validate will first run any transformers
 userModel.validate({ name: ' QUIN ' }); // Returns { name: 'Quin' }
@@ -41,11 +41,11 @@ By default the `@quin` directive provides two *key-value* pairs for immediatae u
 | *transform* | Array of `Transformers` to apply | `@quin(transform: [trim, toTitleCase])`
 | *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])`
 
-> Note: *email* and *immutable* are examples of using custom `Rules`
+> Note: *email* and *immutable* are examples of custom `Rules`
 
 #### Default Transformers
 
-Below is a list of default `Transformers` for immediate use:
+Below is a list of default `Transformers` that come with `@quin`:
 
 | value | description
 | - | - |
@@ -64,6 +64,10 @@ Below is a list of default `Transformers` for immediate use:
 There are no default `Rules` other than the *required* rule. The *required* `Rule` is automatically run when `validation` takes place on a required `!` field.
 
 ## Schema API
+
+```
+const schema = new Quin(gql);
+```
 
 | API | description | Returns
 | - | - | - |
