@@ -63,22 +63,54 @@ Below is a list of default `Transformers` that come with `@quin`:
 
 There are no default `Rules` other than the *required* rule. The *required* `Rule` is automatically run when `validation` takes place on a required `!` field.
 
-## Schema API
+## Quin API
 
-```
+#### Schema
+
+```js
+// Call BEFORE making GraphQL Executable Schema
+// This call modifies gql to support @quin directive
 const schema = new Quin(gql);
 ```
 
 | API | description | Returns
 | - | - | - |
-| `new Quin(gql)` | Constructor. Modifies the input `gql` to support `@quin` directive | `schema`
-| `schema.getModels()` | Retrieve array of models | `[model]`
-| `schema.getModelMap()` | Retrieve map of models (keyed by name) | `Map <model>`
-| `schema.getModel(name)` | Retrieve a single model by name | `model`
-| `schema.getRules()` | Retrieve all `Rules` | `Map <Rule>`
-| `schema.getTransformers()` | Retrieve all `Transformers` | `Map <Transformer>`
+| `schema.getModels()` | Retrieve array of `models` | `[model]`
+| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
+| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
+| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
+| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
 | `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
 
+#### Model
+
+```js
+const model = schema.getModel('User');
+```
+
+| API | description | Returns
+| - | - | - |
+| `schema.getModels()` | Retrieve array of `models` | `[model]`
+| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
+| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
+| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
+| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
+| `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
+
+#### Field
+
+```js
+const field = model.getField('emailAddress');
+```
+
+| API | description | Returns
+| - | - | - |
+| `schema.getModels()` | Retrieve array of `models` | `[model]`
+| `schema.getModelMap()` | Retrieve map of `models` (keyed by name) | `Map <model>`
+| `schema.getModel(name)` | Retrieve a single `model` by name | `model`
+| `schema.getRules()` | Retrieve all `rules` | `Map <rule>`
+| `schema.getTransformers()` | Retrieve all `transformers` | `Map <transformer>`
+| `schema.getExecutableSchema()` | Get underlying [executable schema]() | `GQLSchema`
 
 ## Extending Quin
 
