@@ -34,12 +34,12 @@ userModel.validate({ emailAddress: 'foobar' }); // Throws Error
 
 ## Quin Directive
 
-By default the `@quin` directive provides two *key-value* pairs for immediatae use:
+By default the `@quin` directive provides two key-value pairs for immediate use:
 
 | key | value | example
 | - | - | - |
-| *transform* | Array of `Transformers` to apply | `@quin(transform: [trim, toTitleCase])`
-| *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])`
+| *transform* | List of `Transformer` *enums* to apply | `@quin(transform: [trim, toTitleCase])`
+| *enforce* | List of `Rule` *enums* to enforce | `@quin(enforce: [email, immutable])`
 
 > Note: *email* and *immutable* are examples of custom `Rules`
 
@@ -47,7 +47,7 @@ By default the `@quin` directive provides two *key-value* pairs for immediatae u
 
 Below is a list of default `Transformers` that come with `@quin`:
 
-| value | description
+| enum | description
 | - | - |
 | *trim* | Remove whitespace from both ends of a string
 | *trimEnd* | Remove whitespace from the end of a string
@@ -71,7 +71,7 @@ const schema = new Quin(gql);
 
 | API | description | Returns
 | - | - | - |
-| `new Quin(gql)` | Constructor. Modifies the input `gql` to support `@quin` directives | `schema`
+| `new Quin(gql)` | Constructor. Modifies the input `gql` to support `@quin` directive | `schema`
 | `schema.getModels()` | Retrieve array of models | `[model]`
 | `schema.getModelMap()` | Retrieve map of models (keyed by name) | `Map <model>`
 | `schema.getModel(name)` | Retrieve a single model by name | `model`
