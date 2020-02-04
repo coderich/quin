@@ -1,4 +1,6 @@
-import Schema from './src/core/Schema';
+import Quin from './src/core/Quin';
+import Rule from './src/core/Rule';
+import Transformer from './src/core/Transformer';
 
-export { Schema };
-export default Schema;
+export { Quin, Rule, Transformer };
+export default Quin;
