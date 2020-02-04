@@ -32,3 +32,4 @@ Transformer.factory('toLocaleSentenceCase', (...args) => v => v.charAt(0).toLoca
 Transformer.factory('dedupe', () => v => [...new Set(v)], true, { enumerable: true });
 Transformer.factory('timestamp', () => v => Date.now(), true, { enumerable: true });
 Transformer.factory('cast', type => v => castCmp(type, v));
+Transformer.factory('noop', () => v => v);

@@ -17,6 +17,10 @@ export default class Type {
     return `${getNamedType(this.ast.type)}`;
   }
 
+  getDataType() {
+    return `${this.ast.type}`;
+  }
+
   getDataRef() {
     const ref = this.getType();
     return isScalarDataType(ref) ? null : ref;

@@ -17,12 +17,13 @@ export default class Rule {
 }
 
 // Factory methods
-jsStringMethods.forEach(name => Rule.factory(name, (...args) => val => !String(val)[name](...args)));
-Rule.factory('required', () => val => val == null, false, { enumerable: true });
-Rule.factory('allow', (...args) => val => args.indexOf(val) === -1);
-Rule.factory('deny', (...args) => val => args.indexOf(val) > -1);
+jsStringMethods.forEach(name => Rule.factory(name, (...args) => v => !String(v)[name](...args)));
+Rule.factory('required', () => v => v == null, false, { enumerable: true });
+Rule.factory('allow', (...args) => v => args.indexOf(v) === -1);
+Rule.factory('deny', (...args) => v => args.indexOf(v) > -1);
 Rule.factory('range', (min, max) => {
   if (min == null) min = undefined;
   if (max == null) max = undefined;
-  return val => Number.isNaN(val) || val < min || val > max;
+  return v => Number.isNaN(v) || v < min || v > max;
 });
+Rule.factory('noop', () => v => false);
