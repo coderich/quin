@@ -23,7 +23,7 @@ export default class Transformer {
 }
 
 // Factory methods
-const enumerables = ['toLowerCase', 'toUpperCase', 'trim', 'toString'];
+const enumerables = ['toLowerCase', 'toUpperCase', 'trim', 'trimEnd', 'trimStart', 'toString'];
 jsStringMethods.forEach(name => Transformer.factory(name, (...args) => v => String(v)[name](...args), true, { enumerable: enumerables.indexOf(name) > -1 }));
 Transformer.factory('toTitleCase', () => v => v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()), true, { enumerable: true });
 Transformer.factory('toLocaleTitleCase', (...args) => v => v.replace(/\w\S*/g, w => w.charAt(0).toLocaleUpperCase(...args) + w.slice(1).toLocaleLowerCase()));

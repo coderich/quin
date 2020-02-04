@@ -62,5 +62,7 @@ export default class Model extends Type {
     this.getFields().filter(field => field.getType() !== 'ID').forEach((field) => {
       field.validate(newData[field.getName()], mapper);
     });
+
+    return newData;
   }
 }

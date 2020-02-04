@@ -1,17 +1,17 @@
 # Quin
 
-### GraphQL Schema Manager.
+### Data Validation & Transformation
 
-> ### :construction: :construction: :construction: UNDER CONSTRUCTION :construction: :construction: :construction:
-
-**Quin** is a [GraphQL Directive](https://www.apollographql.com/docs/graphql-tools/schema-directives/) to easily manage field *transformation*, *validation*, and *meta-data* to your GraphQL schema.
+**Quin** is a GraphQL plugin for data **validation** and **transformation**. It provides a custom `@quin` directive for declarative schema design plus a JavaScript API for runtime introspection.
 
 Features include:
-* Field *transformation* and *validation*
-* Schema *meta-data*
-* Extensibility
+* Validation & Transformation Framework
+* JavaScript Schema API
+* Fully Extensible
 
-#### Quickview:
+#### Basic Example:
+
+Define a schema with `@quin`:
 
 ```gql
 Type User {
@@ -21,64 +21,44 @@ Type User {
 }
 ```
 
-## The Quin Directive
-
-The `@quin` directive provides a variety of *key-value* pairs that can be used to manage your schema.
-
-| key | value | example | on
-| - | - | - | -|
-| *allow* | Array of values to allow | `@quin(allow: ["red", "green", "blue"])` | `Fields`
-| *deny* | Array of values to deny | `@quin(deny: [0, false, "false"])` | `Fields`
-| *range* | Numerical range [*min*, *max*] | `@quin(range: [0, 100])` | `Fields`
-| *norepeat* | Array of values to never repeat | `@quin(norepeat: ["special1", "special2"])` | `Fields`
-| *transform* | Array of `Transformers` to apply | `@quin(transform: [trim, toTitleCase])`| `Fields `
-| *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])` | `Fields`
-
-
-#### Transformers
-
-A `Transformer` is used to modify data for a particular field.
+Validate at runtime:
 
 ```js
-@quin(transform: [trim, toLowerCase, ...]) // Define list of transforms
-@quin(transform: dedupe) // Shorthand for a single transform
+const schema = new Quin(gqlSchema);
+const userModel = schema.getModel('User');
+
+// Validate will first perform transformations
+userModel.validate({ name: ' QUIN ' }); // Returns { name: 'Quin' }
+userModel.validate({ emailAddress: 'foobar' }); // Throws
 ```
 
-| name | description
-| - | - |
-| *toTitleCase* | Transform value to titleCase
-| *toLocaleTitleCase* | Transform value to locale titleCase
-| *toSentenceCase* | Transform value to sentenceCase
-| *toLocaleSentenceCase* | Transform value to locale sentenceCase
-| *dedupe* | Remove any duplicates found in array
-| *timestamp* | Transform value to Date.now()
+## The Quin Directive
 
-> You may also use any [JavaScript String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) method as a `transformer`  (eg. `toLowerCase`)
-
-#### Rules
-
-A `Rule` is used to enforce data validation for a particular field.
-
-```
-@quin(enforce: [email, distinct]) // Define list of rules
-@quin(enforce: immutable) // Shorthand for a single rule
-```
-
-| name | description
-| - | - |
-| *email* | Enforce a valid email
-| *selfless* | Must not contain a reference to itself
-| *immutable* | Once set, value cannot be changed
-| *distinct* | List of values must be unique
-
-#### Experimental
+By default, the `@quin` directive provides two *key-value* pairs for use in your schema:
 
 | key | value | example
 | - | - | - |
-| *driver* | Specify data driver | `@quin(driver: mongo)`
-| *alias* | Specify fieldName for driver | `@quin(alias: "first_name")`
-| *materializeBy* | Define a virtual field | `@quin(materializedBy: "author"`
-| *embedded* | Embed fields into model | `@quin(embedded: true)`
-| *hidden* | Mark unavailable for API | `@quin(hidden: true)`
-| *onDelete* | Define `onDelete` behavior | `@quin(onDelete: cascade)`
-| *indexes* | Define `Indexes` for model | `@quin(indexes: [{ ... }])`
+| *transform* | Array of `Transformers` to apply | `@quin(transform: [trim, toTitleCase])`
+| *enforce* | Array of `Rules` to enforce | `@quin(enforce: [email, immutable])`
+
+> Note: *email* and *immutable* are examples of custom `Rules`
+
+#### Default Transformers
+
+Below is a list of default `Transformers` that can be used out of the box:
+
+| value | description
+| - | - |
+| *trim* | Remove whitespace from both ends of a string
+| *trimEnd* | Remove whitespace from the end of a string
+| *trimStart* | Remove whitespace from the start of a string
+| *toLowerCase* | Convert string to lower case
+| *toUpperCase* | Convert string to upper case
+| *toTitleCase* | Convert string to title case
+| *toSentenceCase* | Convert string to sentence case
+| *dedupe* | Remove duplicates from array
+| *timestamp* | Returns Date.now()
+
+#### Default Rules
+
+There are no default `Rules` other than the *required* rule. This `Rule` is automatically run when the `validation` method on any required `!` field is called.
