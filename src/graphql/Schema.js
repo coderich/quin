@@ -19,6 +19,10 @@ export default class Schema {
     return this.models;
   }
 
+  getModel(name) {
+    return this.models[name];
+  }
+
   getRules() {
     return this.rules;
   }
