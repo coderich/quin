@@ -1,4 +1,4 @@
-import { castCmp } from '../service/app.service';
+import { map, castCmp } from '../service/app.service';
 
 const jsStringMethods = [
   'charAt', 'charCodeAt', 'codePointAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
@@ -10,7 +10,8 @@ export default class Transformer {
   constructor(thunk, ignoreNull) {
     return Object.defineProperty((val, cmp = v => thunk(v)) => {
       if (ignoreNull && val == null) return val;
-      return cmp(val);
+      if (!ignoreNull) return cmp(val);
+      return map(val, v => cmp(v));
     }, 'type', { value: 'transformer' });
   }
 
@@ -30,6 +31,6 @@ Transformer.factory('toLocaleTitleCase', (...args) => v => v.replace(/\w\S*/g, w
 Transformer.factory('toSentenceCase', () => v => v.charAt(0).toUpperCase() + v.slice(1), true, { enumerable: true });
 Transformer.factory('toLocaleSentenceCase', (...args) => v => v.charAt(0).toLocaleUpperCase(...args) + v.slice(1));
 
-Transformer.factory('dedupe', () => a => [...new Set(a.map(v => `${v}`))].map(v => a.find(b => `${b}` === v)), true, { enumerable: true });
+Transformer.factory('dedupe', () => a => [...new Set(a.map(v => `${v}`))].map(v => a.find(b => `${b}` === v)), false, { enumerable: true });
 Transformer.factory('timestamp', () => v => Date.now(), true, { enumerable: true });
 Transformer.factory('cast', type => v => castCmp(type, v));

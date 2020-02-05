@@ -1,5 +1,7 @@
 export const ucFirst = string => string.charAt(0).toUpperCase() + string.slice(1);
+
 export const isScalarDataType = value => ['ID', 'String', 'Float', 'Int', 'Boolean'].indexOf(value) > -1;
+
 export const castCmp = (type, value) => {
   switch (type) {
     case 'String': {
@@ -20,4 +22,12 @@ export const castCmp = (type, value) => {
       return value;
     }
   }
+};
+
+export const map = (mixed, fn) => {
+  if (mixed == null) return mixed;
+  const isArray = Array.isArray(mixed);
+  const arr = isArray ? mixed : [mixed];
+  const results = arr.map(el => fn(el));
+  return isArray ? results : results[0];
 };

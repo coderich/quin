@@ -1,10 +1,13 @@
+import { map } from '../service/app.service';
+
 const jsStringMethods = ['endsWith', 'includes', 'match', 'search', 'startsWith'];
 
 export default class Rule {
   constructor(thunk, ignoreNull = true) {
     return Object.defineProperty((val, cmp = v => thunk(v)) => {
       if (ignoreNull && val == null) return;
-      if (cmp(val)) throw new Error('Rule error');
+      if (!ignoreNull && cmp(val)) throw new Error('Rule Error');
+      if (ignoreNull) map(val, (v) => { if (cmp(v)) throw new Error('Rule error'); });
     }, 'type', { value: 'rule' });
   }
 
