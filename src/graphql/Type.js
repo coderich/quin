@@ -20,9 +20,8 @@ export default class Type {
   getDataType() {
     const type = this.getType();
     if (!this.isArray()) return type;
-    return [type];
-    // const isSet = this.getDirectiveArg('quin', 'transform', '').indexOf('dedupe') > -1;
-    // return Object.assign([type], { isSet });
+    const isSet = this.getDirectiveArg('quin', 'transform', '').indexOf('dedupe') > -1;
+    return Object.assign([type], { isSet });
   }
 
   getDataRef() {

@@ -14,7 +14,7 @@ export const castCmp = (type, value) => {
     case 'Boolean': {
       if (value === 'true') return true;
       if (value === 'false') return false;
-      return Boolean(value);
+      return value;
     }
     default: {
       return value;
