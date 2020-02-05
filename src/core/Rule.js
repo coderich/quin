@@ -26,4 +26,3 @@ Rule.factory('range', (min, max) => {
   if (max == null) max = undefined;
   return v => Number.isNaN(v) || v < min || v > max;
 });
-Rule.factory('noop', () => v => false);
