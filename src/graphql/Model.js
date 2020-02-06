@@ -3,8 +3,7 @@ import Field from './Field';
 
 export default class Model extends Type {
   constructor(schema, model) {
-    super(model);
-    this.schema = schema;
+    super(schema, model);
     this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
   }
 

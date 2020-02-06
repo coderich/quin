@@ -37,6 +37,8 @@ export default class Quin {
 
       directive @quin(
         ${customDirectives.join('\n\t    ')}
+        alias: String
+        materializeBy: String
         enforce: [QuinEnforceEnum!]
         transform: [QuinTransformEnum!]
       ) on OBJECT | FIELD_DEFINITION

@@ -5,7 +5,9 @@ export default {
     enum IndexEnum { unique }
     input IndexInput { name: String type: IndexEnum! on: [String!]! }
 
-    type Person {
+    type Person
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       authored: [Book]
@@ -27,21 +29,27 @@ export default {
       chapters: [Chapter]
     }
 
-    type Chapter {
+    type Chapter
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       book: Book!
       pages: [Page]
     }
 
-    type Page {
+    type Page
+      @quin
+    {
       id: ID!
       number: Int!
       verbage: String
       chapter: Chapter!
     }
 
-    type BookStore {
+    type BookStore
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       location: String
@@ -49,7 +57,9 @@ export default {
       building: Building!
     }
 
-    type Library {
+    type Library
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       location: String,
@@ -57,7 +67,9 @@ export default {
       building: Building!
     }
 
-    type Apartment {
+    type Apartment
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       location: String
@@ -72,13 +84,17 @@ export default {
       landlord: Person
     }
 
-    type Color {
+    type Color
+      @quin
+    {
       id: ID!
       type: String!
       isDefault: Boolean
     }
 
-    type Art {
+    type Art
+      @quin
+    {
       id: ID!
       name: String! @quin(transform: toTitleCase)
       bids: [Float]

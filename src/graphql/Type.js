@@ -3,7 +3,8 @@ import { isScalarDataType } from '../service/app.service';
 import Directive from './Directive';
 
 export default class Type {
-  constructor(ast) {
+  constructor(schema, ast) {
+    this.schema = schema;
     this.ast = ast;
     this.directives = this.ast.astNode.directives.map(directive => new Directive(directive));
     this.toString = () => `${this.getName()}`;
@@ -17,6 +18,10 @@ export default class Type {
     return `${getNamedType(this.ast.type)}`;
   }
 
+  getAlias(defaultValue) {
+    return this.getDirectiveArg('quin', 'alias', defaultValue || this.getName());
+  }
+
   getDataType() {
     const type = this.getType();
     if (!this.isArray()) return type;
@@ -26,6 +31,14 @@ export default class Type {
   getDataRef() {
     const ref = this.getType();
     return isScalarDataType(ref) ? null : ref;
+  }
+
+  getModelRef() {
+    return this.schema.getModels()[this.getDataRef()];
+  }
+
+  getVirtualRef() {
+    return this.getDirectiveArg('quin', 'materializeBy');
   }
 
   getDirective(name) {
@@ -54,5 +67,18 @@ export default class Type {
 
   isRequired() {
     return isNonNullType(this.ast.type);
+  }
+
+  isEntity() {
+    return Boolean(this.getDirective('quin'));
+  }
+
+  isEmbedded() {
+    const model = this.getModelRef();
+    return Boolean(model && !model.isEntity());
+  }
+
+  isVirtual() {
+    return Boolean(this.getDirectiveArg('quin', 'materializeBy'));
   }
 }

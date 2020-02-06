@@ -5,8 +5,7 @@ import { ensureArray } from '../service/app.service';
 
 export default class Field extends Type {
   constructor(schema, field) {
-    super(field);
-    this.schema = schema;
+    super(schema, field);
     this.transforms = [];
     this.rules = [];
     if (this.isRequired()) this.rules.push(Rule.required());
@@ -28,10 +27,6 @@ export default class Field extends Type {
         }
       }
     });
-  }
-
-  getModelRef() {
-    return this.schema.getModels()[this.getDataRef()];
   }
 
   cast(value) {
