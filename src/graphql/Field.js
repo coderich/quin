@@ -1,6 +1,7 @@
 import Type from './Type';
 import Rule from '../core/Rule';
 import Transformer from '../core/Transformer';
+import { ensureArray } from '../service/app.service';
 
 export default class Field extends Type {
   constructor(schema, field) {
@@ -8,7 +9,6 @@ export default class Field extends Type {
     this.schema = schema;
     this.transforms = [];
     this.rules = [];
-    this.cast = Transformer.cast(this.getType());
     if (this.isRequired()) this.rules.push(Rule.required());
 
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
@@ -34,12 +34,18 @@ export default class Field extends Type {
     return this.schema.getModels()[this.getDataRef()];
   }
 
+  cast(value) {
+    const casted = Transformer.cast(this.getType())(value);
+    return this.isArray() ? ensureArray(casted) : casted;
+  }
+
   transform(value, mapper) {
     if (mapper == null) mapper = {};
 
-    return this.transforms.concat(this.cast).reduce((prev, transform) => {
+    value = this.cast(value);
+
+    return this.transforms.reduce((prev, transform) => {
       const cmp = mapper[transform.method];
-      if (Array.isArray(prev)) return prev.map(p => transform(p, cmp));
       return transform(prev, cmp);
     }, value);
   }
@@ -49,7 +55,6 @@ export default class Field extends Type {
 
     return Promise.all(this.rules.map((rule) => {
       const cmp = mapper[rule.method];
-      if (Array.isArray(value)) return value.map(v => rule(v, cmp));
       return rule(value, cmp);
     }));
   }

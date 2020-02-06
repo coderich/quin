@@ -8,10 +8,14 @@ export const castCmp = (type, value) => {
       return `${value}`;
     }
     case 'Float': case 'Number': {
-      return Number(value);
+      const num = Number(value);
+      if (!Number.isNaN(num)) return num;
+      return value;
     }
     case 'Int': {
-      return parseInt(value, 10);
+      const num = parseInt(value, 10);
+      if (!Number.isNaN(num)) return num;
+      return value;
     }
     case 'Boolean': {
       if (value === 'true') return true;
@@ -31,3 +35,5 @@ export const map = (mixed, fn) => {
   const results = arr.map(el => fn(el));
   return isArray ? results : results[0];
 };
+
+export const ensureArray = a => (Array.isArray(a) ? a : [a]);
