@@ -14,12 +14,12 @@ export default class Type {
     return this.ast.name;
   }
 
-  getType() {
-    return `${getNamedType(this.ast.type)}`;
-  }
-
   getAlias(defaultValue) {
     return this.getDirectiveArg('quin', 'alias', defaultValue || this.getName());
+  }
+
+  getType() {
+    return `${getNamedType(this.ast.type)}`;
   }
 
   getDataType() {
@@ -41,6 +41,16 @@ export default class Type {
     return this.getDirectiveArg('quin', 'materializeBy');
   }
 
+  getVirtualModel() {
+    return this.schema.getModels()[this.getType()];
+  }
+
+  getVirtualField() {
+    const vModel = this.getVirtualModel();
+    if (vModel) return vModel.getField(this.getVirtualRef());
+    return null;
+  }
+
   getDirective(name) {
     return this.directives.find(directive => directive.getName() === name);
   }
@@ -55,6 +65,12 @@ export default class Type {
     const directive = this.getDirective(name);
     if (!directive) return defaultValue;
     return directive.getArgs();
+  }
+
+  resolveField() {
+    const vField = this.getVirtualField() || this;
+    if (vField !== this) return vField.resolveField();
+    return this;
   }
 
   isArray() {

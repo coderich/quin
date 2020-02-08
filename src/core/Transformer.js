@@ -30,6 +30,8 @@ Transformer.factory('toTitleCase', () => v => v.replace(/\w\S*/g, w => w.charAt(
 Transformer.factory('toLocaleTitleCase', (...args) => v => v.replace(/\w\S*/g, w => w.charAt(0).toLocaleUpperCase(...args) + w.slice(1).toLocaleLowerCase()));
 Transformer.factory('toSentenceCase', () => v => v.charAt(0).toUpperCase() + v.slice(1), true, { enumerable: true });
 Transformer.factory('toLocaleSentenceCase', (...args) => v => v.charAt(0).toLocaleUpperCase(...args) + v.slice(1));
+// Transformer.factory('dedupe', () => a => [...new Set(map(map(a, v => `${v}`), v => ensureArray(a).find(b => `${b}` === v)))], false, { enumerable: true });
 Transformer.factory('dedupe', () => a => [...new Set(a.map(v => `${v}`))].map(v => a.find(b => `${b}` === v)), false, { enumerable: true });
 Transformer.factory('timestamp', () => v => Date.now(), true, { enumerable: true });
 Transformer.factory('cast', type => v => castCmp(type, v));
+Transformer.factory('id', () => v => v);

@@ -9,7 +9,7 @@ describe('Model', () => {
     expect(Person.transform({ name: 'rich' })).toEqual({ name: 'Rich' });
     expect(Person.transform({ name: 'RICH' })).toEqual({ name: 'Rich' });
     expect(Person.transform({ name: 'RicH' })).toEqual({ name: 'Rich' });
-    expect(Person.transform({ name: 'RicH', hero: 'paul' })).toEqual({ name: 'Rich', hero: 'richard' });
+    expect(Person.transform({ name: 'RicH', authored: ['book1', 'book2'], hero: 'paul' })).toEqual({ name: 'Rich', authored: ['book1', 'book2'], hero: 'richard' });
   });
 
   test('Rules', () => {

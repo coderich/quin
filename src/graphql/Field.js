@@ -4,10 +4,11 @@ import Transformer from '../core/Transformer';
 import { ensureArray } from '../service/app.service';
 
 export default class Field extends Type {
-  constructor(schema, field) {
+  constructor(schema, model, field) {
     super(schema, field);
-    this.transforms = [];
+    this.model = model;
     this.rules = [];
+    this.transformers = [];
     if (this.isRequired()) this.rules.push(Rule.required());
 
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
@@ -19,7 +20,7 @@ export default class Field extends Type {
           break;
         }
         case 'transform': {
-          this.transforms.push(...value.map(t => schema.getTransformers()[t]));
+          this.transformers.push(...value.map(t => schema.getTransformers()[t]));
           break;
         }
         default: {
@@ -36,13 +37,32 @@ export default class Field extends Type {
 
   transform(value, mapper) {
     if (mapper == null) mapper = {};
+    const transformers = [...this.transformers];
 
-    value = this.cast(value);
+    // Delegate transformations to the actual field responsible
+    const field = this.resolveField();
+    if (field !== this) return field.transform(value, mapper);
 
-    return this.transforms.reduce((prev, transform) => {
-      const cmp = mapper[transform.method];
-      return transform(prev, cmp);
-    }, value);
+    // If we're a dataRef field, need to either id(value) or delegate object to model
+    if (this.getDataRef()) {
+      const [idOrObj] = ensureArray(value);
+
+      // Delegate check
+      if (typeof idOrObj === 'object') {
+        const keys = Object.keys(idOrObj);
+        const fields = this.model.getFieldNames();
+        if (fields.some(f => keys.includes(f))) return this.model.transform(value, mapper);
+      }
+
+      // Id(value)
+      transformers.push(Transformer.id());
+    }
+
+    // Perform transformation
+    return transformers.reduce((prev, transformer) => {
+      const cmp = mapper[transformer.method];
+      return transformer(prev, cmp);
+    }, this.cast(value));
   }
 
   validate(value, mapper) {

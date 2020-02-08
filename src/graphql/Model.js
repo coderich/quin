@@ -4,18 +4,22 @@ import Field from './Field';
 export default class Model extends Type {
   constructor(schema, model) {
     super(schema, model);
-    this.fields = Object.values(model.getFields()).map(field => new Field(schema, field));
+    this.fields = Object.values(model.getFields()).map(field => new Field(schema, this, field));
   }
 
   getFields() {
     return this.fields;
   }
 
+  getFieldNames() {
+    return this.fields.map(field => field.getName());
+  }
+
   getFieldMap() {
     return this.fields.reduce((prev, field) => Object.assign(prev, { [field.getName()]: field }), {});
   }
 
-  getField(path) {
+  getField(path = '') {
     const [name, ...rest] = path.split('.');
     const field = this.fields.find(f => f.getName() === name);
     if (field == null) return field;
@@ -46,7 +50,9 @@ export default class Model extends Type {
     if (mapper == null) mapper = {};
 
     return Object.entries(data).reduce((prev, [key, value]) => {
-      return Object.assign(prev, { [key]: this.getField(key).transform(value, mapper) });
+      const field = this.getField(key);
+      if (!field) return Object.assign(prev, { [key]: value });
+      return Object.assign(prev, { [key]: field.transform(value, mapper) });
     }, {});
   }
 

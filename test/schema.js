@@ -10,7 +10,7 @@ export default {
     {
       id: ID!
       name: String! @quin(transform: toTitleCase)
-      authored: [Book]
+      authored: [Book] @quin(materializeBy: "author")
       emailAddress: String! @quin(enforce: email)
       friends: [Person] @quin(transform: dedupe)
       status: String

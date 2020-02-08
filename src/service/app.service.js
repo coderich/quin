@@ -1,6 +1,6 @@
 export const ucFirst = string => string.charAt(0).toUpperCase() + string.slice(1);
-
 export const isScalarDataType = value => ['ID', 'String', 'Float', 'Int', 'Boolean'].indexOf(value) > -1;
+export const ensureArray = a => (Array.isArray(a) ? a : [a]);
 
 export const castCmp = (type, value) => {
   switch (type) {
@@ -35,5 +35,3 @@ export const map = (mixed, fn) => {
   const results = arr.map(el => fn(el));
   return isArray ? results : results[0];
 };
-
-export const ensureArray = a => (Array.isArray(a) ? a : [a]);
