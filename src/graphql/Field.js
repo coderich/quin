@@ -9,7 +9,6 @@ export default class Field extends Type {
     this.model = model;
     this.rules = [];
     this.transformers = [];
-    if (this.isRequired()) this.rules.push(Rule.required());
 
     Object.entries(this.getDirectiveArgs('quin', {})).forEach(([key, value]) => {
       if (!Array.isArray(value)) value = [value];
@@ -35,18 +34,17 @@ export default class Field extends Type {
     return this.isArray() ? ensureArray(casted) : casted;
   }
 
-  transform(value, mapper) {
-    if (mapper == null) mapper = {};
+  transform(value, mapper = {}) {
+    const modelRef = this.getModelRef();
     const transformers = [...this.transformers];
 
-    // Delegate transformations to the actual field responsible
-    const field = this.resolveField();
-    if (field !== this) return field.transform(value, mapper);
+    // // Delegate transformations to the actual field responsible
+    // const field = this.resolveField();
+    // if (field !== this) return field.transform(value, mapper);
 
     // If we're a dataRef field, need to either id(value) or delegate object to model
-    if (this.getDataRef()) {
-      const [idOrObj] = ensureArray(value);
-      if (isPlainObject(idOrObj)) return this.model.transform(value, mapper); // delegate
+    if (modelRef) {
+      if (isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
       transformers.push(Transformer.id()); // id(value)
     }
 
@@ -57,10 +55,17 @@ export default class Field extends Type {
     }, this.cast(value));
   }
 
-  validate(value, mapper) {
-    if (mapper == null) mapper = {};
+  validate(value, mapper = {}) {
+    const modelRef = this.getModelRef();
+    const rules = [...this.rules];
+    if (this.isRequired() && this.getType() !== 'ID') rules.push(Rule.required()); // Required rule
 
-    return Promise.all(this.rules.map((rule) => {
+    if (modelRef) {
+      if (isPlainObject(ensureArray(value)[0])) return modelRef.validate(value, mapper); // Model delegation
+      rules.push(Rule.id()); // id(value)
+    }
+
+    return Promise.all(rules.map((rule) => {
       const cmp = mapper[rule.method];
       return rule(value, cmp);
     }));

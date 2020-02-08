@@ -12,25 +12,27 @@ describe('Model', () => {
     expect(Person.transform({ name: 'RicH', authored: ['book1', 'book2'], hero: 'paul' })).toEqual({ name: 'Rich', authored: ['book1', 'book2'], hero: 'richard' });
   });
 
-  test('Rules', () => {
+  test('Rules', async () => {
     const required = v => v === null;
-    expect(() => Person.validate({ name: 'rich' })).toThrow();
-    expect(() => Person.validate({ name: 'rich', emailAddress: 'me@' })).toThrow();
-    expect(() => Person.validate({ name: 'rich' }, { required })).not.toThrow();
-    expect(() => Person.validate({ name: 'rich', emailAddress: 'me@me.com' })).not.toThrow();
+    await expect(Person.validate({ name: 'rich' })).rejects.toThrow();
+    await expect(Person.validate({ name: 'rich', emailAddress: 'me@' })).rejects.toThrow();
+    await expect(Person.validate({ name: 'rich' }, { required })).resolves.toBeDefined();
+    await expect(Person.validate({ name: 'rich', emailAddress: 'me@me.com' })).resolves.toBeDefined();
 
-    expect(() => Book.validate()).toThrow();
-    expect(() => Book.validate(null)).toThrow();
-    expect(() => Book.validate({ name: 'book' })).toThrow();
-    expect(() => Book.validate({ price: '50.55' })).toThrow();
-    expect(() => Book.validate({ name: 'the bible' }, { required })).toThrow();
-    expect(() => Book.validate({ price: '150.55' }, { required })).toThrow();
-    expect(() => Book.validate({ price: '50.55' }, { required })).not.toThrow();
-    expect(() => Book.validate(null, { required })).not.toThrow();
+    await expect(Book.validate()).rejects.toThrow();
+    await expect(Book.validate(null)).rejects.toThrow();
+    await expect(Book.validate({ name: 'book' })).rejects.toThrow();
+    await expect(Book.validate({ price: '50.55' })).rejects.toThrow();
+    await expect(Book.validate({ name: 'the bible' }, { required })).rejects.toThrow();
+    await expect(Book.validate({ price: '150.55' }, { required })).rejects.toThrow();
+    await expect(Book.validate({ price: '50.55' }, { required })).resolves.toBeDefined();
+    await expect(Book.validate(null, { required })).resolves.toBeDefined();
+    await expect(Book.validate({ name: 'book', price: '50.55', author: 'abcde' })).resolves.toBeDefined();
 
-    expect(() => Art.validate({ name: 'art', comments: 'yes' })).not.toThrow();
-    expect(() => Art.validate({ name: 'art', comments: ['yes'] })).not.toThrow();
-    expect(() => Art.validate({ name: 'art', comments: ['yes', 'maybe'] })).not.toThrow();
-    expect(() => Art.validate({ name: 'art', comments: ['yes', 'maybe', 'perhaps'] })).toThrow();
+
+    await expect(Art.validate({ name: 'art', comments: 'yes' })).resolves.toBeDefined();
+    await expect(Art.validate({ name: 'art', comments: ['yes'] })).resolves.toBeDefined();
+    await expect(Art.validate({ name: 'art', comments: ['yes', 'maybe'] })).resolves.toBeDefined();
+    await expect(Art.validate({ name: 'art', comments: ['yes', 'maybe', 'perhaps'] })).rejects.toThrow();
   });
 });

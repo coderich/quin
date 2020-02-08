@@ -47,7 +47,6 @@ export default class Model extends Type {
 
   transform(data, mapper) {
     if (data == null) data = {};
-    if (mapper == null) mapper = {};
 
     return Object.entries(data).reduce((prev, [key, value]) => {
       const field = this.getField(key);
@@ -58,16 +57,13 @@ export default class Model extends Type {
 
   validate(data, mapper) {
     if (data == null) data = {};
-    if (mapper == null) mapper = {};
 
     // Validate does an explicit transform first
-    const newData = this.transform(data, mapper);
+    const transformed = this.transform(data, mapper);
 
     // Enforce the rules
-    this.getFields().filter(field => field.getType() !== 'ID').forEach((field) => {
-      field.validate(newData[field.getName()], mapper);
-    });
-
-    return newData;
+    return Promise.all(this.getFields().map((field) => {
+      return field.validate(transformed[field.getName()], mapper);
+    })).then(() => transformed);
   }
 }

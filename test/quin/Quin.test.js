@@ -33,7 +33,7 @@ describe('Quin', () => {
     expect(transformer.type).toBe('transformer');
   });
 
-  test('schema', () => {
+  test('schema', async () => {
     const schema = new Quin(graphSchema);
     expect(schema).toBeDefined();
 
@@ -44,9 +44,9 @@ describe('Quin', () => {
     expect(toLowerCase).toBeDefined();
     expect(bookName).toBeDefined();
 
-    expect(() => email('hi')).toThrow();
-    expect(() => email('me@me.com')).not.toThrow();
-    expect(() => bookName('The Bible')).toThrow();
-    expect(() => bookName('Anything else')).not.toThrow();
+    await expect(email('hi')).rejects.toThrow();
+    await expect(email('me@me.com')).resolves;
+    await expect(bookName('The Bible')).rejects.toThrow();
+    await expect(bookName('Anything else')).resolves;
   });
 });
