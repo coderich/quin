@@ -1,5 +1,8 @@
+import IPO from 'is-plain-object';
+
 export const ucFirst = string => string.charAt(0).toUpperCase() + string.slice(1);
 export const isScalarDataType = value => ['ID', 'String', 'Float', 'Int', 'Boolean'].indexOf(value) > -1;
+export const isPlainObject = value => IPO(value);
 export const ensureArray = a => (Array.isArray(a) ? a : [a]);
 
 export const castCmp = (type, value) => {

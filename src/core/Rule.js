@@ -3,17 +3,17 @@ import { map } from '../service/app.service';
 const jsStringMethods = ['endsWith', 'includes', 'match', 'search', 'startsWith'];
 
 export default class Rule {
-  constructor(thunk, ignoreNull = true) {
+  constructor(thunk, ignoreNull = true, name = 'Unknown') {
     return Object.defineProperty((val, cmp = v => thunk(v)) => {
       if (ignoreNull && val == null) return;
-      if (!ignoreNull && cmp(val)) throw new Error('Rule Error');
-      if (ignoreNull) map(val, (v) => { if (cmp(v)) throw new Error('Rule error'); });
+      if (!ignoreNull && cmp(val)) throw new Error(`Rule Error: ${name}`);
+      if (ignoreNull) map(val, (v) => { if (cmp(v)) throw new Error(`Rule Error: ${name}`); });
     }, 'type', { value: 'rule' });
   }
 
   static factory(name, thunk, ignoreNull = true, descriptor = {}) {
     return Object.defineProperty(Rule, name, {
-      value: (...args) => Object.defineProperty(new Rule(thunk(...args), ignoreNull), 'method', { value: name }),
+      value: (...args) => Object.defineProperty(new Rule(thunk(...args), ignoreNull, name), 'method', { value: name }),
       ...descriptor,
     })[name];
   }

@@ -1,7 +1,7 @@
 import Type from './Type';
 import Rule from '../core/Rule';
 import Transformer from '../core/Transformer';
-import { ensureArray } from '../service/app.service';
+import { isPlainObject, ensureArray } from '../service/app.service';
 
 export default class Field extends Type {
   constructor(schema, model, field) {
@@ -46,16 +46,8 @@ export default class Field extends Type {
     // If we're a dataRef field, need to either id(value) or delegate object to model
     if (this.getDataRef()) {
       const [idOrObj] = ensureArray(value);
-
-      // Delegate check
-      if (typeof idOrObj === 'object') {
-        const keys = Object.keys(idOrObj);
-        const fields = this.model.getFieldNames();
-        if (fields.some(f => keys.includes(f))) return this.model.transform(value, mapper);
-      }
-
-      // Id(value)
-      transformers.push(Transformer.id());
+      if (isPlainObject(idOrObj)) return this.model.transform(value, mapper); // delegate
+      transformers.push(Transformer.id()); // id(value)
     }
 
     // Perform transformation

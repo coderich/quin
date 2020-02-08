@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/coderich/quin/issues"
   },
-  "homepage": "https://github.com/coderich/quin#readme"
+  "homepage": "https://github.com/coderich/quin#readme",
+  "dependencies": {
+    "is-plain-object": "^3.0.0"
+  }
 }
