@@ -41,7 +41,7 @@ export default class Rule {
 
 // Factory methods
 jsStringMethods.forEach(name => Rule.factory(name, (...args) => v => !String(v)[name](...args)));
-Rule.factory('id', () => v => false);
+Rule.factory('idResolve', () => v => false, true, { writable: true });
 Rule.factory('required', () => v => v == null, false, { enumerable: true });
 Rule.factory('allow', (...args) => v => args.indexOf(v) === -1);
 Rule.factory('deny', (...args) => v => args.indexOf(v) > -1);

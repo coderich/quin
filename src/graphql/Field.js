@@ -34,6 +34,23 @@ export default class Field extends Type {
     return this.isArray() ? ensureArray(casted) : casted;
   }
 
+  // normalize(value, mapper = {}) {
+  //   const modelRef = this.getModelRef();
+  //   const transformers = [...this.transformers];
+
+  //   // If we're a dataRef field, need to either id(value) or delegate object to model
+  //   if (modelRef) {
+  //     if (isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
+  //     else transformers.push(Transformer.id()); // id(value)
+  //   }
+
+  //   // Perform transformation
+  //   return transformers.reduce((prev, transformer) => {
+  //     const cmp = mapper[transformer.method];
+  //     return transformer(prev, cmp);
+  //   }, this.cast(value));
+  // }
+
   transform(value, mapper = {}) {
     const modelRef = this.getModelRef();
     const transformers = [...this.transformers];
@@ -58,11 +75,16 @@ export default class Field extends Type {
   validate(value, mapper = {}) {
     const modelRef = this.getModelRef();
     const rules = [...this.rules];
+
+    // // Delegate transformations to the actual field responsible
+    // const field = this.resolveField();
+    // if (field !== this) return field.validate(value, mapper);
+
     if (this.isRequired() && this.getType() !== 'ID') rules.push(Rule.required()); // Required rule
 
     if (modelRef) {
       if (isPlainObject(ensureArray(value)[0])) return modelRef.validate(value, mapper); // Model delegation
-      rules.push(Rule.id()); // id(value)
+      rules.push(Rule.idResolve(this)); // id(value)
     }
 
     return Promise.all(rules.map((rule) => {
