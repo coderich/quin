@@ -30,7 +30,7 @@ export default class Field extends Type {
   }
 
   cast(value) {
-    const casted = Transformer.cast(this.getType())(value);
+    const casted = Transformer.cast(this.getType())(this, value);
     return this.isArray() ? ensureArray(casted) : casted;
   }
 
@@ -68,7 +68,7 @@ export default class Field extends Type {
     // Perform transformation
     return transformers.reduce((prev, transformer) => {
       const cmp = mapper[transformer.method];
-      return transformer(prev, cmp);
+      return transformer(this, prev, cmp);
     }, this.cast(value));
   }
 
@@ -84,12 +84,12 @@ export default class Field extends Type {
 
     if (modelRef) {
       if (isPlainObject(ensureArray(value)[0])) return modelRef.validate(value, mapper); // Model delegation
-      rules.push(Rule.idResolve(this)); // id(value)
+      rules.push(Rule.idResolve()); // id(value)
     }
 
     return Promise.all(rules.map((rule) => {
       const cmp = mapper[rule.method];
-      return rule(value, cmp);
+      return rule(this, value, cmp);
     }));
   }
 }

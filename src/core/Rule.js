@@ -4,19 +4,19 @@ const jsStringMethods = ['endsWith', 'includes', 'match', 'search', 'startsWith'
 
 export default class Rule {
   constructor(thunk, ignoreNull = true, name = 'Unknown') {
-    return Object.defineProperty((val, cmp = v => thunk(v)) => {
+    return Object.defineProperty((field, val, cmp = (f, v) => thunk(f, v)) => {
       return new Promise((resolve, reject) => {
         if (ignoreNull) {
           if (val != null) {
             return Promise.all(ensureArray(map(val, async (v) => {
-              const err = await cmp(v);
+              const err = await cmp(field, v);
               if (err) return Promise.reject(new Error(`Rule Error: ${name}`));
               return Promise.resolve();
             }))).then(v => resolve()).catch(e => reject(e));
           }
         } else {
           return Promise.all([(async () => {
-            const err = await cmp(val);
+            const err = await cmp(field, val);
             if (err) return Promise.reject(new Error(`Rule Error: ${name}`));
             return Promise.resolve();
           })()]).then(v => resolve()).catch(e => reject(e));
@@ -40,13 +40,13 @@ export default class Rule {
 }
 
 // Factory methods
-jsStringMethods.forEach(name => Rule.factory(name, (...args) => v => !String(v)[name](...args)));
-Rule.factory('idResolve', () => v => false, true, { writable: true });
-Rule.factory('required', () => v => v == null, false, { enumerable: true });
-Rule.factory('allow', (...args) => v => args.indexOf(v) === -1);
-Rule.factory('deny', (...args) => v => args.indexOf(v) > -1);
+jsStringMethods.forEach(name => Rule.factory(name, (...args) => (f, v) => !String(v)[name](...args)));
+Rule.factory('idResolve', () => (f, v) => false, true, { writable: true });
+Rule.factory('required', () => (f, v) => v == null, false, { enumerable: true });
+Rule.factory('allow', (...args) => (f, v) => args.indexOf(v) === -1);
+Rule.factory('deny', (...args) => (f, v) => args.indexOf(v) > -1);
 Rule.factory('range', (min, max) => {
   if (min == null) min = undefined;
   if (max == null) max = undefined;
-  return v => Number.isNaN(v) || v < min || v > max;
+  return (f, v) => Number.isNaN(v) || v < min || v > max;
 });

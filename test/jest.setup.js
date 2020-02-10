@@ -4,7 +4,7 @@ import Rule from '../src/core/Rule';
 import Transformer from '../src/core/Transformer';
 
 // Adding new rules
-Rule.factory('email', () => v => !isEmail(v));
+Rule.factory('email', () => (f, v) => !isEmail(v));
 
 // Adding new transform
 Transformer.factory('richard', () => v => 'richard');

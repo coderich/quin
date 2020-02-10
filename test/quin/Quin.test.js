@@ -44,9 +44,9 @@ describe('Quin', () => {
     expect(toLowerCase).toBeDefined();
     expect(bookName).toBeDefined();
 
-    await expect(email('hi')).rejects.toThrow();
-    await expect(email('me@me.com')).resolves;
-    await expect(bookName('The Bible')).rejects.toThrow();
-    await expect(bookName('Anything else')).resolves;
+    await expect(email(null, 'hi')).rejects.toThrow();
+    await expect(email(null, 'me@me.com')).resolves;
+    await expect(bookName(null, 'The Bible')).rejects.toThrow();
+    await expect(bookName(null, 'Anything else')).resolves;
   });
 });

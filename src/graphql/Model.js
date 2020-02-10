@@ -55,16 +55,16 @@ export default class Model extends Type {
     }, {});
   }
 
-  normalize(data, mapper) {
-    if (data == null) data = {};
+  // normalize(data, mapper) {
+  //   if (data == null) data = {};
 
-    return Object.entries(data).reduce((prev, [key, value]) => {
-      const field = this.getField(key);
-      if (!field) return Object.assign(prev, { [key]: value });
-      const alias = field.getAlias();
-      return Object.assign(prev, { [alias]: field.normalize(value, mapper) });
-    }, {});
-  }
+  //   return Object.entries(data).reduce((prev, [key, value]) => {
+  //     const field = this.getField(key);
+  //     if (!field) return Object.assign(prev, { [key]: value });
+  //     const alias = field.getAlias();
+  //     return Object.assign(prev, { [alias]: field.normalize(value, mapper) });
+  //   }, {});
+  // }
 
   validate(data, mapper) {
     // Validate does an explicit transform first
