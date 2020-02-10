@@ -7,6 +7,10 @@ export default class Model extends Type {
     this.fields = Object.values(model.getFields()).map(field => new Field(schema, this, field));
   }
 
+  getIdField() {
+    return this.fields.find(field => field.getType() === 'ID');
+  }
+
   getFields() {
     return this.fields;
   }
@@ -45,6 +49,17 @@ export default class Model extends Type {
     return this.fields.filter(field => Boolean(field.getDataRef()));
   }
 
+  serialize(data, mapper) {
+    if (data == null) data = {};
+
+    return Object.entries(data).reduce((prev, [key, value]) => {
+      const field = this.getField(key);
+      if (!field) return Object.assign(prev, { [key]: value }); // should you remove the key?
+      const alias = field.getAlias();
+      return Object.assign(prev, { [alias]: field.serialize(value, mapper) });
+    }, {});
+  }
+
   transform(data, mapper) {
     if (data == null) data = {};
 
@@ -54,17 +69,6 @@ export default class Model extends Type {
       return Object.assign(prev, { [key]: field.transform(value, mapper) });
     }, {});
   }
-
-  // normalize(data, mapper) {
-  //   if (data == null) data = {};
-
-  //   return Object.entries(data).reduce((prev, [key, value]) => {
-  //     const field = this.getField(key);
-  //     if (!field) return Object.assign(prev, { [key]: value });
-  //     const alias = field.getAlias();
-  //     return Object.assign(prev, { [alias]: field.normalize(value, mapper) });
-  //   }, {});
-  // }
 
   validate(data, mapper) {
     // Validate does an explicit transform first

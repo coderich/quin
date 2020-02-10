@@ -1,4 +1,4 @@
-import { map, castCmp } from '../service/app.service';
+import { map, serialize, castCmp } from '../service/app.service';
 
 const jsStringMethods = [
   'charAt', 'charCodeAt', 'codePointAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
@@ -33,4 +33,5 @@ Transformer.factory('toLocaleSentenceCase', (...args) => (f, v) => v.charAt(0).t
 Transformer.factory('dedupe', () => (f, a) => [...new Set(a.map(v => `${v}`))].map(v => a.find(b => `${b}` === v)), false, { enumerable: true });
 Transformer.factory('timestamp', () => (f, v) => Date.now(), true, { enumerable: true });
 Transformer.factory('cast', type => (f, v) => castCmp(type, v));
-Transformer.factory('id', () => (f, v) => v);
+Transformer.factory('id', () => (f, v) => v, true, { writable: true });
+Transformer.factory('serialize', () => (f, v) => serialize(f, v));

@@ -27,6 +27,12 @@ export default class Field extends Type {
         }
       }
     });
+
+    if (this.isRequired() && this.getType() !== 'ID') this.rules.push(Rule.required()); // Required rule
+  }
+
+  getModel() {
+    return this.model;
   }
 
   cast(value) {
@@ -34,24 +40,11 @@ export default class Field extends Type {
     return this.isArray() ? ensureArray(casted) : casted;
   }
 
-  // normalize(value, mapper = {}) {
-  //   const modelRef = this.getModelRef();
-  //   const transformers = [...this.transformers];
+  serialize(value, mapper) {
+    return this.transform(value, mapper, true);
+  }
 
-  //   // If we're a dataRef field, need to either id(value) or delegate object to model
-  //   if (modelRef) {
-  //     if (isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
-  //     else transformers.push(Transformer.id()); // id(value)
-  //   }
-
-  //   // Perform transformation
-  //   return transformers.reduce((prev, transformer) => {
-  //     const cmp = mapper[transformer.method];
-  //     return transformer(prev, cmp);
-  //   }, this.cast(value));
-  // }
-
-  transform(value, mapper = {}) {
+  transform(value, mapper = {}, serialize) {
     const modelRef = this.getModelRef();
     const transformers = [...this.transformers];
 
@@ -61,7 +54,8 @@ export default class Field extends Type {
 
     // If we're a dataRef field, need to either id(value) or delegate object to model
     if (modelRef) {
-      if (isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
+      if ((!serialize || !modelRef.isEntity()) && isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
+      if (serialize) transformers.push(Transformer.serialize()); // Serializer
       transformers.push(Transformer.id()); // id(value)
     }
 
@@ -80,8 +74,6 @@ export default class Field extends Type {
     // const field = this.resolveField();
     // if (field !== this) return field.validate(value, mapper);
 
-    if (this.isRequired() && this.getType() !== 'ID') rules.push(Rule.required()); // Required rule
-
     if (modelRef) {
       if (isPlainObject(ensureArray(value)[0])) return modelRef.validate(value, mapper); // Model delegation
       rules.push(Rule.idResolve()); // id(value)
@@ -91,5 +83,9 @@ export default class Field extends Type {
       const cmp = mapper[rule.method];
       return rule(this, value, cmp);
     }));
+  }
+
+  isIdField() {
+    return Boolean(this.model.getIdField() === this);
   }
 }

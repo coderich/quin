@@ -31,6 +31,14 @@ export const castCmp = (type, value) => {
   }
 };
 
+export const serialize = (field, value) => {
+  if (!isPlainObject(value)) return value;
+  const model = field.getModelRef();
+  if (!model) return value;
+  const key = model.getIdField().getName();
+  return value[key];
+};
+
 export const map = (mixed, fn) => {
   if (mixed == null) return mixed;
   const isArray = Array.isArray(mixed);
