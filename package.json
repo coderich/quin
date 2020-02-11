@@ -1,7 +1,7 @@
 {
   "name": "@coderich/quin",
   "author": "Richard Livolsi (coderich)",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A GraphQL Schema for your data",
   "license": "MIT",
   "main": "index.js",
