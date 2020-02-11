@@ -24,10 +24,6 @@ export default class Rule {
 
         return resolve();
       });
-
-      // if (ignoreNull && val == null) return;
-      // if (!ignoreNull && cmp(val)) throw new Error(`Rule Error: ${name}`);
-      // if (ignoreNull) map(val, (v) => { if (cmp(v)) throw new Error(`Rule Error: ${name}`); });
     }, 'type', { value: 'rule' });
   }
 
@@ -41,7 +37,7 @@ export default class Rule {
 
 // Factory methods
 jsStringMethods.forEach(name => Rule.factory(name, (...args) => (f, v) => !String(v)[name](...args)));
-Rule.factory('idResolve', () => (f, v) => false, true, { writable: true });
+Rule.factory('ensureId', () => (f, v) => false, true, { writable: true });
 Rule.factory('required', () => (f, v) => v == null, false, { enumerable: true });
 Rule.factory('allow', (...args) => (f, v) => args.indexOf(v) === -1);
 Rule.factory('deny', (...args) => (f, v) => args.indexOf(v) > -1);

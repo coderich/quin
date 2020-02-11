@@ -56,7 +56,7 @@ export default class Field extends Type {
     if (modelRef) {
       if ((!serialize || !modelRef.isEntity()) && isPlainObject(ensureArray(value)[0])) return modelRef.transform(value, mapper); // delegate
       if (serialize) transformers.push(Transformer.serialize()); // Serializer
-      transformers.push(Transformer.id()); // id(value)
+      transformers.push(Transformer.toId());
     }
 
     // Perform transformation
@@ -76,7 +76,7 @@ export default class Field extends Type {
 
     if (modelRef) {
       if (isPlainObject(ensureArray(value)[0])) return modelRef.validate(value, mapper); // Model delegation
-      rules.push(Rule.idResolve()); // id(value)
+      rules.push(Rule.ensureId());
     }
 
     return Promise.all(rules.map((rule) => {
